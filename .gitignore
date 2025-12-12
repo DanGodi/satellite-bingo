@@ -40,3 +40,5 @@ htmlcov/
 mask/
 sat_images/
 converted_sat_images/
+image_feature_map.json
+interactive_segmentation.ipynb
