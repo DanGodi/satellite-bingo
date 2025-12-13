@@ -1,13 +1,16 @@
 from PIL import Image
 import os
+from pathlib import Path
 
 from sklearn import base
 
-input_folder = "sat_images/"
-output_folder = "converted_sat_images/"
-scale = 1.0  # 100% size
+REPO_ROOT = Path(__file__).resolve().parent.parent
+input_folder = REPO_ROOT / "sat_images"
+output_folder = REPO_ROOT / "converted_sat_images"
+input_folder = input_folder.resolve()
+output_folder.mkdir(parents=True, exist_ok=True)
 
-os.makedirs(output_folder, exist_ok=True)
+scale = 1.0  # 100% size
 
 # Collect and sort only image files, then enumerate to rename sequentially
 image_files = sorted(

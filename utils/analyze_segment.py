@@ -258,7 +258,22 @@ def parse_args():
 
 def main():
     args = parse_args()
-    df = process(mapping_path=Path(args.mapping), out_dir=Path(args.out), device=args.device, resume=args.resume)
+
+    # Resolve paths relative to the repository root (script location), not the
+    # current working directory. This makes the script behave the same whether
+    # you run `python ./utils/analyze_segment.py` from the repo root or run it
+    # from inside the `utils/` folder.
+    repo_root = Path(__file__).resolve().parent.parent
+
+    mapping_arg = Path(args.mapping)
+    if not mapping_arg.is_absolute():
+        mapping_arg = repo_root / mapping_arg
+
+    out_arg = Path(args.out)
+    if not out_arg.is_absolute():
+        out_arg = repo_root / out_arg
+
+    df = process(mapping_path=mapping_arg, out_dir=out_arg, device=args.device, resume=args.resume)
     print("Done. Results rows:", len(df))
 
 
