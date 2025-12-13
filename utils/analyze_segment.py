@@ -100,7 +100,19 @@ def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True,
     overlays_dir.mkdir(parents=True, exist_ok=True)
 
     # initialize SamGeo3
-    device_idx = 0 if (device == "gpu" and torch.cuda.is_available()) else None
+    # Check for CUDA (NVIDIA) or MPS (Apple Silicon)
+    if device == "gpu":
+        if torch.cuda.is_available():
+            device_idx = "cuda"
+        elif torch.backends.mps.is_available():
+            device_idx = "mps"
+            print("Using Apple Silicon GPU (MPS)")
+        else:
+            device_idx = "cpu"
+            print("GPU requested but not available. Using CPU.")
+    else:
+        device_idx = "cpu"
+
     print("Initializing SamGeo3 device:", device_idx)
     sam3 = SamGeo3(backend="transformers", device=device_idx, checkpoint_path=None, load_from_HF=True)
 
