@@ -100,9 +100,10 @@ def simulate_game(image_order, counts_matrix, cards_data):
     # Once marked, it stays marked.
     
     n_cards = len(cards_data)
-    card_progress = {c['card_id']: [10] for c in cards_data} # Starts with 10 needed
+    # Support variable card sizes: each card may have a different number of squares
     card_events = {c['card_id']: c['events'] for c in cards_data}
-    card_status = {c['card_id']: [False]*10 for c in cards_data} # 10 False values
+    card_progress = {c['card_id']: [len(c['events'])] for c in cards_data} # Starts with needed squares
+    card_status = {c['card_id']: [False] * len(c['events']) for c in cards_data}
     
     winners = []
     
@@ -155,8 +156,11 @@ def create_presentation():
     first_place = winners[0] if len(winners) > 0 else None
     second_place = winners[1] if len(winners) > 1 else None
     third_place = winners[2] if len(winners) > 2 else None
-    
-    print(f"The winner won on turn {first_place[1]}")
+
+    if first_place:
+        print(f"The winner won on turn {first_place[1]}")
+    else:
+        print("No winners found in the simulated order.")
     
     # 4. Generate PDF
     with PdfPages(OUTPUT_PDF) as pdf:
@@ -244,15 +248,22 @@ def create_presentation():
         
         # --- Fun Stats: The Race ---
         plt.figure(figsize=(11.69, 8.27))
-        
+
         # Plot progress of top 3 vs Average
         turns = range(len(all_images) + 1)
-        
+
         # Calculate average progress
-        all_progress = np.array([card_progress[c['card_id']] for c in cards_data])
-        # Pad with last value if lengths differ (shouldn't happen if we simulated full game)
-        avg_needed = np.mean(all_progress, axis=0)
-        
+        all_progress = np.array([card_progress[c['card_id']] for c in cards_data], dtype=object)
+        # Convert to 2D numeric array - all card_progress lists should have equal length (we append each turn)
+        try:
+            all_progress_numeric = np.vstack([np.array(p) for p in all_progress])
+            avg_needed = np.mean(all_progress_numeric, axis=0)
+        except Exception:
+            # Fallback: compute average elementwise by padding with last value
+            max_len = max(len(p) for p in all_progress)
+            padded = np.array([np.pad(p, (0, max_len - len(p)), 'edge') for p in all_progress], dtype=float)
+            avg_needed = np.mean(padded, axis=0)
+
         plt.plot(avg_needed, 'k--', label='Average Card', linewidth=2, alpha=0.5)
         
         if first_place:
@@ -263,7 +274,9 @@ def create_presentation():
             pid = second_place[0]
             plt.plot(card_progress[pid], 'b-', label=f'2nd (Card {pid})', linewidth=2)
             
-        plt.gca().invert_yaxis() # 10 down to 0
+        # Y axis range depends on card sizes (use maximum squares per card)
+        max_squares = max(len(c['events']) for c in cards_data)
+        plt.gca().set_ylim(max_squares, 0)
         plt.xlabel("Turn Number")
         plt.ylabel("Squares Needed to Win")
         plt.title("The Race to Bingo", fontsize=20)
