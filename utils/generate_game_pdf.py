@@ -161,6 +161,11 @@ def create_presentation():
         print(f"The winner won on turn {first_place[1]}")
     else:
         print("No winners found in the simulated order.")
+    if second_place:
+        print(f"Second place won on turn {second_place[1]}")
+    
+    if third_place:
+        print(f"Third place won on turn {third_place[1]}")
     
     # 4. Generate PDF
     with PdfPages(OUTPUT_PDF) as pdf:
