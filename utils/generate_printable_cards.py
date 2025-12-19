@@ -3,11 +3,6 @@ import matplotlib.pyplot as plt
 import textwrap
 from pathlib import Path
 import math
-import json
-import matplotlib.pyplot as plt
-import textwrap
-from pathlib import Path
-import math
 
 # Defaults (no CLI args)
 CARDS_PER_PAGE = 6
@@ -16,13 +11,7 @@ PAGE_COLS = 2
 PAGE_SIZE = (11.69, 8.27)  # A4 Landscape in inches
 DPI = 300
 
-# Paths (relative to this script)
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-JSON_PATH = PROJECT_ROOT / "bingo_cards.json"
-OUTPUT_DIR = PROJECT_ROOT / "printable_cards"
-
-
-def create_page(page_num: int, cards_batch: list, card_rows: int = 2, card_cols: int = 5):
+def create_page(page_num: int, cards_batch: list, output_dir: Path, card_rows: int = 2, card_cols: int = 5):
     """Renders a single page containing up to CARDS_PER_PAGE cards.
     card_rows x card_cols define the layout inside each card (e.g. 3x5 for 15 items).
     """
@@ -71,20 +60,22 @@ def create_page(page_num: int, cards_batch: list, card_rows: int = 2, card_cols:
         ax.set_yticks([])
 
     plt.tight_layout()
-    out_path = OUTPUT_DIR / f"bingo_cards_page_{page_num}.jpg"
+    out_path = output_dir / f"bingo_cards_page_{page_num}.jpg"
     plt.savefig(out_path, dpi=DPI, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved {out_path}")
 
 
-def main():
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+def generate_printable_cards(json_path, output_dir):
+    json_path = Path(json_path)
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    if not JSON_PATH.exists():
-        print(f"Error: {JSON_PATH} not found. Run the card generation notebook first.")
+    if not json_path.exists():
+        print(f"Error: {json_path} not found. Run the card generation notebook first.")
         return
 
-    with open(JSON_PATH, 'r') as f:
+    with open(json_path, 'r') as f:
         cards_data = json.load(f)
 
     if not cards_data:
@@ -97,15 +88,18 @@ def main():
     card_rows = math.ceil(max_squares / card_cols)
 
     total_pages = math.ceil(len(cards_data) / CARDS_PER_PAGE)
-    print(f"Generating {total_pages} pages into {OUTPUT_DIR} ...")
+    print(f"Generating {total_pages} pages into {output_dir} ...")
 
     for p in range(total_pages):
         start = p * CARDS_PER_PAGE
         end = start + CARDS_PER_PAGE
         batch = cards_data[start:end]
-        create_page(p + 1, batch, card_rows=card_rows, card_cols=card_cols)
+        create_page(p + 1, batch, output_dir, card_rows=card_rows, card_cols=card_cols)
 
     print("Done! Check the 'printable_cards' folder.")
 
 if __name__ == "__main__":
-    main()
+    PROJECT_ROOT = Path(__file__).resolve().parent.parent
+    JSON_PATH = PROJECT_ROOT / "bingo_cards.json"
+    OUTPUT_DIR = PROJECT_ROOT / "printable_cards"
+    generate_printable_cards(JSON_PATH, OUTPUT_DIR)
