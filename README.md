@@ -39,10 +39,7 @@ This project uses **SAM 3 (Segment Anything Model 3)** via the `samgeo` library.
 1.  **Request Access**: Go to the [SAM 3 Hugging Face page](https://huggingface.co/facebook/sam3) (or the specific model used) and accept the license terms.
     *   *Note: Ensure you have access to the model checkpoints required by `samgeo`.*
 2.  **Get a Token**: Create a [Hugging Face Access Token](https://huggingface.co/settings/tokens) (Read permissions are sufficient).
-3.  **Configure Notebook**: In `run_full_game.ipynb`, look for **Step 3** and paste your token into the `HF_TOKEN` variable:
-    ```python
-    HF_TOKEN = "hf_..." 
-    ```
+3.  **Configure Notebook**: In `run_full_game.ipynb`, look for **Step 3**, uncomment the login cell, run it and insert you HF token in the required field.
 
 ## 🎮 How to Create Your Game
 
