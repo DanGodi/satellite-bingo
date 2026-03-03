@@ -202,7 +202,7 @@ class GameState {
  * @returns {Promise<object>} The parsed dataset
  */
 async function loadDataset() {
-  const response = await fetch('data/dataset.json');
+  const response = await fetch('web/data/dataset.json');
   if (!response.ok) {
     throw new Error(`Failed to load dataset.json: ${response.statusText}`);
   }
@@ -215,7 +215,7 @@ async function loadDataset() {
  * @returns {Promise<array>} Array of bingo card objects
  */
 async function loadCards() {
-  const response = await fetch('data/cards.json');
+  const response = await fetch('web/data/cards.json');
   if (!response.ok) {
     throw new Error(`Failed to load cards.json: ${response.statusText}`);
   }
