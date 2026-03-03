@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Satellite Bingo - Host View</title>
+  <link rel="stylesheet" href="web/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🛰️ Satellite Bingo</h1>
+      <p>Host View - Control the Game</p>
+    </header>
+
+    <div class="game-view">
+      <!-- Header bar with turn counter and controls -->
+      <div class="game-header">
+        <h1 style="font-size: 1.5em;">Game In Progress</h1>
+        <div class="turn-counter" id="turnInfo">
+          Turn <span id="currentTurn">0</span> / <span id="totalTurns">36</span>
+        </div>
+        <button id="nextImageBtn" onclick="hostAdvanceTurn()" style="margin-left: auto;">
+          Next Image →
+        </button>
+        <button class="secondary" onclick="hostResetGame()">Reset Game</button>
+      </div>
+
+      <!-- Image display area -->
+      <div class="image-display">
+        <div id="imageContainer" style="position: relative;">
+          <img id="gameImage" alt="Satellite image" style="display: none; width: 100%;">
+          <div id="noImageState" class="empty-state">
+            <h3>Click "Next Image" to begin the game</h3>
+            <p>36 satellite images will be revealed one at a time.</p>
+          </div>
+        </div>
+        <div class="image-id" id="imageIdDisplay" style="display: none;"></div>
+      </div>
+
+      <!-- Events that fired this turn -->
+      <div id="eventsSection" style="display: none;">
+        <div class="events-panel">
+          <h3>✓ Events Fired This Turn</h3>
+          <div class="events-chips" id="eventsList"></div>
+        </div>
+      </div>
+
+      <!-- Card progress display -->
+      <div class="progress-section">
+        <h3>Card Progress</h3>
+        <div class="card-progress" id="cardProgressContainer">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Winners announcement -->
+      <div id="winnersSection" style="display: none;">
+        <div style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; padding: 30px; border-radius: 8px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+          <h2 style="font-size: 2.5em; margin-bottom: 10px;">🎉 BINGO! 🎉</h2>
+          <p id="winnerMessage" style="font-size: 1.2em;">Card <span id="winnerCardId"></span> has won!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load required JavaScript -->
+  <script src="web/js/events.js"></script>
+  <script src="web/js/game.js"></script>
+  <script src="web/js/host.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Satellite Bingo</title>
+  <link rel="stylesheet" href="web/css/style.css">
+</head>
+<body>
+  <div class="landing">
+    <div class="card" style="max-width: 700px;">
+      <header style="margin-bottom: 40px;">
+        <h1 style="color: var(--text-dark);">🛰️ Satellite Bingo</h1>
+        <p style="color: #6b7280; font-size: 1.1em;">An AI-powered game using satellite imagery and object detection</p>
+      </header>
+
+      <h2>Welcome to the Game!</h2>
+
+      <p style="margin-bottom: 30px; color: #4b5563; line-height: 1.8;">
+        This game uses artificial intelligence (Segment Anything Model 3) to detect objects in satellite images.
+        Mark your bingo card as events fire, and be the first to complete your card to win!
+      </p>
+
+      <div class="landing-buttons">
+        <a href="host.html" style="text-decoration: none;">
+          <button style="width: 100%; padding: 18px; font-size: 1.1em;">
+            🎮 Host Game
+          </button>
+        </a>
+        <a href="player.html" style="text-decoration: none;">
+          <button class="secondary" style="width: 100%; padding: 18px; font-size: 1.1em;">
+            👤 I'm a Player
+          </button>
+        </a>
+      </div>
+
+      <div style="margin-top: 40px; padding: 20px; background: #f3f4f6; border-radius: 6px; font-size: 0.95em; color: #4b5563;">
+        <h3 style="margin-bottom: 15px; color: var(--text-dark);">How It Works</h3>
+        <ol style="margin-left: 20px; line-height: 2;">
+          <li><strong>Host</strong> reveals satellite images one at a time</li>
+          <li>The game automatically detects objects in each image (ships, cars, pools, etc.)</li>
+          <li><strong>Players</strong> mark matching events on their bingo cards</li>
+          <li>First player to complete their card wins!</li>
+        </ol>
+      </div>
+
+      <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center; color: #9ca3af; font-size: 0.9em;">
+        <p>
+          Built with satellite imagery from
+          <a href="https://www.usgs.gov/" style="color: var(--primary-color); text-decoration: none;">USGS</a>
+          and AI object detection
+        </p>
+        <p style="margin-top: 10px;">
+          <a href="https://github.com/DanGodi/segmentation-bingo" style="color: var(--primary-color); text-decoration: none;">📘 View on GitHub</a>
+        </p>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>

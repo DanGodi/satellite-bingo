@@ -1,0 +1,114 @@
+[
+  {
+    "card_id": 1,
+    "events": [
+      "More than 1 small boats",
+      "Contains container ship",
+      "Exactly 1 green car",
+      "Contains empty parking lot",
+      "Contains batman logo",
+      "Contains coca cola logo",
+      "More than 1 pools",
+      "Contains ferry",
+      "More than 5 golf bunkers",
+      "Contains island"
+    ],
+    "avg_turns_to_win_isolation": 28.8642
+  },
+  {
+    "card_id": 2,
+    "events": [
+      "Contains ferry",
+      "Exactly 1 green car",
+      "Contains space shuttle",
+      "Contains empty parking lot",
+      "Contains coca cola logo",
+      "More than 1 football fields",
+      "Contains wave",
+      "Contains solar panel array",
+      "Exactly 5 pools",
+      "More than 4 tennis courts"
+    ],
+    "avg_turns_to_win_isolation": 28.9322
+  },
+  {
+    "card_id": 3,
+    "events": [
+      "Contains solar panel array",
+      "More than 4 planes",
+      "More than 1 football fields",
+      "Contains coca cola logo",
+      "More than 1 yellow cars",
+      "Contains container ship",
+      "Contains batman logo",
+      "Contains island",
+      "More than 5 small boats",
+      "Contains blue plane"
+    ],
+    "avg_turns_to_win_isolation": 28.6086
+  },
+  {
+    "card_id": 4,
+    "events": [
+      "More than 1 golf bunkers",
+      "Contains space shuttle",
+      "Exactly 2 blue planes",
+      "Contains ferry",
+      "Exactly 1 football field",
+      "Contains batman logo",
+      "More than 3 pools",
+      "Contains solar panel array",
+      "Exactly 1 red car",
+      "Contains coca cola logo"
+    ],
+    "avg_turns_to_win_isolation": 28.549
+  },
+  {
+    "card_id": 5,
+    "events": [
+      "Contains coca cola logo",
+      "More than 1 small boats",
+      "Contains wave",
+      "Contains island",
+      "More than 3 red cars",
+      "More than 1 golf bunkers",
+      "Contains space shuttle",
+      "More than 3 pools",
+      "Contains container ship",
+      "Contains green car"
+    ],
+    "avg_turns_to_win_isolation": 28.8094
+  },
+  {
+    "card_id": 6,
+    "events": [
+      "Contains island",
+      "Contains coca cola logo",
+      "More than 4 red cars",
+      "More than 2 yellow cars",
+      "More than 1 football fields",
+      "More than 4 small boats",
+      "Contains wave",
+      "More than 4 pools",
+      "More than 5 planes",
+      "Contains ferry"
+    ],
+    "avg_turns_to_win_isolation": 28.5232
+  },
+  {
+    "card_id": 7,
+    "events": [
+      "Contains island",
+      "Exactly 2 blue planes",
+      "More than 2 tennis courts",
+      "More than 1 yellow cars",
+      "Contains batman logo",
+      "Contains solar panel array",
+      "Contains coca cola logo",
+      "More than 1 red cars",
+      "Contains small boat",
+      "Exactly 2 football fields"
+    ],
+    "avg_turns_to_win_isolation": 28.2542
+  }
+]

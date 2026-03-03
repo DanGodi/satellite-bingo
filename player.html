@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Satellite Bingo - Player View</title>
+  <link rel="stylesheet" href="web/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🛰️ Satellite Bingo</h1>
+      <p>Player View - Your Bingo Card</p>
+    </header>
+
+    <div class="game-view">
+      <!-- Card selector -->
+      <div class="card">
+        <div class="card-selector">
+          <label for="cardSelect">Select Your Card:</label>
+          <select id="cardSelect" onchange="playerSelectCard()">
+            <option value="">-- Choose a card --</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Bingo card display -->
+      <div id="cardContainer" style="display: none;">
+        <div class="bingo-card" id="bingoCard">
+          <div class="card-header">
+            <h3 id="cardTitle">Card</h3>
+            <div id="bingoLabel" class="bingo-label" style="display: none;">✓ BINGO!</div>
+          </div>
+          <div class="card-grid" id="cardGrid">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+          <button class="success" id="claimBingoBtn" onclick="playerClaimBingo()" disabled>
+            🎉 CLAIM BINGO!
+          </button>
+          <button class="secondary" onclick="playerClearCard()" style="margin-left: 10px;">
+            Clear Card
+          </button>
+        </div>
+      </div>
+
+      <!-- Instructions -->
+      <div id="instructionsCard" class="card">
+        <h3>How to Play</h3>
+        <ol style="margin-left: 20px; line-height: 2;">
+          <li><strong>Select your card</strong> from the dropdown above</li>
+          <li><strong>Watch the host screen</strong> as images are revealed</li>
+          <li><strong>Click squares</strong> on your card when you see the matching events</li>
+          <li><strong>Get 10 in a row</strong> (all squares marked) and click "CLAIM BINGO!"</li>
+          <li><strong>Or use automatic mode:</strong> Events auto-mark when the host reveals them (requires synchronized timing)</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load required JavaScript -->
+  <script src="web/js/events.js"></script>
+  <script src="web/js/game.js"></script>
+  <script src="web/js/player.js"></script>
+</body>
+</html>
