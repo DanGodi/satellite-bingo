@@ -10,6 +10,8 @@
 
 let dataset = null;
 let allFeatures = null;
+let peerManager = null;
+let gameInfo = null;
 
 /**
  * Update player count display when slider changes.
@@ -151,6 +153,17 @@ async function startGeneration() {
     // Also update game.js to use these cards
     window.generatedCards = cards;
 
+    // Initialize peer-to-peer connection and create host game
+    try {
+      peerManager = new PeerManager();
+      gameInfo = await peerManager.createHostGame();
+      document.getElementById('gameCodeDisplay').textContent = gameInfo.gameCode;
+      logProgress('✓ Game code generated: ' + gameInfo.gameCode);
+    } catch (error) {
+      console.error('Failed to create host game:', error);
+      document.getElementById('gameCodeDisplay').textContent = 'ERROR';
+    }
+
   } catch (error) {
     logProgress(`✗ Error: ${error.message}`);
     console.error('Generation failed:', error);
@@ -159,6 +172,23 @@ async function startGeneration() {
     document.getElementById('progressSection').style.display = 'none';
     document.getElementById('setupForm').style.display = 'block';
   }
+}
+
+/**
+ * Start the host game and navigate to host.html
+ */
+function startHostGame() {
+  if (!gameInfo || !gameInfo.gameCode) {
+    alert('Game not initialized. Please refresh and try again.');
+    return;
+  }
+
+  // Store game info in sessionStorage for host.html to access
+  sessionStorage.setItem('hostGameInfo', JSON.stringify(gameInfo));
+  sessionStorage.setItem('hostGameCards', JSON.stringify(window.generatedCards));
+
+  // Navigate to host view
+  window.location.href = 'host.html';
 }
 
 // Initialize on page load

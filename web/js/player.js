@@ -2,6 +2,7 @@
  * Player view controller for Satellite Bingo.
  *
  * Handles:
+ *  - Joining a P2P game with game code and host peer ID
  *  - Loading cards and dataset
  *  - Displaying the player's selected card
  *  - Manual square marking/unmarking
@@ -13,17 +14,76 @@ let dataset = null;
 let cards = null;
 let selectedCardId = null;
 let cardMarkings = {};  // cardId -> boolean[]
+let peerManager = null;
+let isConnectedToHost = false;
 
 const STORAGE_KEY_PREFIX = 'bingo_player_';
 
 /**
- * Initialize on page load.
+ * Player joins a game using game code and host peer ID.
  */
-async function initPlayer() {
+async function playerJoinGame() {
+  const gameCode = document.getElementById('gameCodeInput').value.trim().toUpperCase();
+  const hostPeerId = document.getElementById('hostPeerIdInput').value.trim();
+
+  if (!gameCode || !hostPeerId) {
+    alert('Please enter both game code and host peer ID');
+    return;
+  }
+
+  // Show connecting status
+  document.getElementById('joinSection').style.display = 'none';
+  document.getElementById('connectingSection').style.display = 'block';
+  document.getElementById('connectionStatus').textContent = 'Initializing peer connection...';
+
   try {
-    // Load data
-    dataset = await loadDataset();
-    cards = await getCards();
+    // Initialize peer manager
+    peerManager = new PeerManager();
+    await peerManager.joinGame(gameCode, hostPeerId);
+
+    document.getElementById('connectionStatus').textContent = 'Connected! Loading cards from host...';
+
+    // Set up message handler to receive cards from host
+    peerManager.onMessage((data) => {
+      handleHostMessage(data);
+    });
+
+    // Request cards from host
+    peerManager.broadcastMessage({
+      type: 'player-ready',
+      gameCode: gameCode
+    });
+
+    isConnectedToHost = true;
+    console.log('Connected to host, awaiting cards...');
+  } catch (error) {
+    console.error('Failed to join game:', error);
+    document.getElementById('connectionStatus').textContent = `❌ ${error.message}`;
+    document.getElementById('connectingSection').style.display = 'none';
+    document.getElementById('joinSection').style.display = 'block';
+    alert('Failed to join game: ' + error.message);
+  }
+}
+
+/**
+ * Handle messages from the host.
+ */
+function handleHostMessage(data) {
+  console.log('Received from host:', data.type);
+
+  if (data.type === 'cards-data') {
+    // Host sent the cards and dataset
+    cards = data.cards;
+    dataset = data.dataset;
+
+    // Initialize markings for all cards
+    for (const card of cards) {
+      cardMarkings[card.card_id] = new Array(card.events.length).fill(false);
+    }
+
+    // Hide connecting section, show game section
+    document.getElementById('connectingSection').style.display = 'none';
+    document.getElementById('gameSection').style.display = 'block';
 
     // Populate card selector
     const select = document.getElementById('cardSelect');
@@ -34,19 +94,37 @@ async function initPlayer() {
       select.appendChild(option);
     }
 
-    // Initialize markings for all cards
-    for (const card of cards) {
-      cardMarkings[card.card_id] = new Array(card.events.length).fill(false);
-    }
-
     // Try to restore saved selection and markings
     restorePlayerState();
 
-    console.log('Player view initialized with', cards.length, 'cards');
-  } catch (error) {
-    console.error('Failed to initialize player view:', error);
-    alert('Failed to load game data. Please refresh the page.');
+    console.log('Received cards from host:', cards.length, 'cards');
+
+    // Send confirmation back to host
+    peerManager.broadcastMessage({
+      type: 'cards-received',
+      cardCount: cards.length
+    });
   }
+}
+
+/**
+ * Initialize on page load.
+ */
+async function initPlayer() {
+  // Check if we should join a game or load local cards
+  const urlParams = new URLSearchParams(window.location.search);
+  const gameCode = urlParams.get('gameCode');
+  const hostPeerId = urlParams.get('hostPeerId');
+
+  if (gameCode && hostPeerId) {
+    // Auto-join from URL parameters
+    document.getElementById('gameCodeInput').value = gameCode;
+    document.getElementById('hostPeerIdInput').value = hostPeerId;
+    playerJoinGame();
+  }
+
+  // Player can also manually enter game code and peer ID
+  console.log('Player view ready. Waiting for game code input or URL parameters.');
 }
 
 /**

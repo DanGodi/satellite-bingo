@@ -85,11 +85,19 @@
     <div id="successSection" style="display: none; max-width: 600px; margin: 40px auto;">
       <div class="card" style="background: #f0fdf4; border-left: 4px solid #16a34a;">
         <h2 style="color: #15803d; margin-bottom: 15px;">✓ Cards Generated!</h2>
-        <p style="margin-bottom: 20px; color: #4b5563;">
+        <p style="margin-bottom: 10px; color: #4b5563;">
           <span id="successCardCount">4</span> balanced bingo cards have been created and are ready to play.
         </p>
+
+        <!-- Game Code Display -->
+        <div style="margin: 20px 0; padding: 15px; background: white; border: 2px solid #15803d; border-radius: 6px; text-align: center;">
+          <p style="margin: 0 0 8px 0; color: #4b5563; font-size: 0.9em;">Your Game Code:</p>
+          <p id="gameCodeDisplay" style="margin: 0; font-size: 2em; font-weight: bold; letter-spacing: 2px; color: #15803d; font-family: monospace;">LOADING...</p>
+          <p style="margin: 8px 0 0 0; color: #6b7280; font-size: 0.85em;">Share this code with players to join</p>
+        </div>
+
         <div style="display: flex; gap: 10px;">
-          <button class="success" onclick="window.location.href='host.html'" style="flex: 1; padding: 12px;">
+          <button class="success" onclick="startHostGame()" style="flex: 1; padding: 12px;">
             🎮 Start as Host
           </button>
           <button class="secondary" onclick="window.location.href='player.html'" style="flex: 1; padding: 12px;">
@@ -104,8 +112,10 @@
   </div>
 
   <!-- Load required JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
   <script src="web/js/game.js"></script>
   <script src="web/js/card-generator.js"></script>
+  <script src="web/js/peer-connection.js"></script>
   <script src="web/js/setup.js"></script>
 </body>
 </html>
