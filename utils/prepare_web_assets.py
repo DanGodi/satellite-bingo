@@ -96,7 +96,7 @@ def prepare_web_assets(
 
         image_entry = {
             "id": basename.replace('.jpg', ''),  # e.g., "image_1"
-            "filename": f"images/{basename}",
+            "filename": f"web/images/{basename}",  # Path relative to root HTML files
             "features": features_dict
         }
         images_list.append(image_entry)

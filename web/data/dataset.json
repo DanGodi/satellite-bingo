@@ -3,7 +3,7 @@
   "images": [
     {
       "id": "image_1",
-      "filename": "images/image_1.jpg",
+      "filename": "web/images/image_1.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -28,7 +28,7 @@
     },
     {
       "id": "image_2",
-      "filename": "images/image_2.jpg",
+      "filename": "web/images/image_2.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -53,7 +53,7 @@
     },
     {
       "id": "image_3",
-      "filename": "images/image_3.jpg",
+      "filename": "web/images/image_3.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -78,7 +78,7 @@
     },
     {
       "id": "image_4",
-      "filename": "images/image_4.jpg",
+      "filename": "web/images/image_4.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -103,7 +103,7 @@
     },
     {
       "id": "image_5",
-      "filename": "images/image_5.jpg",
+      "filename": "web/images/image_5.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -128,7 +128,7 @@
     },
     {
       "id": "image_6",
-      "filename": "images/image_6.jpg",
+      "filename": "web/images/image_6.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -153,7 +153,7 @@
     },
     {
       "id": "image_7",
-      "filename": "images/image_7.jpg",
+      "filename": "web/images/image_7.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -178,7 +178,7 @@
     },
     {
       "id": "image_8",
-      "filename": "images/image_8.jpg",
+      "filename": "web/images/image_8.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -203,7 +203,7 @@
     },
     {
       "id": "image_9",
-      "filename": "images/image_9.jpg",
+      "filename": "web/images/image_9.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 2,
@@ -228,7 +228,7 @@
     },
     {
       "id": "image_10",
-      "filename": "images/image_10.jpg",
+      "filename": "web/images/image_10.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -253,7 +253,7 @@
     },
     {
       "id": "image_11",
-      "filename": "images/image_11.jpg",
+      "filename": "web/images/image_11.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -278,7 +278,7 @@
     },
     {
       "id": "image_12",
-      "filename": "images/image_12.jpg",
+      "filename": "web/images/image_12.jpg",
       "features": {
         "batman logo": 1,
         "blue plane": 0,
@@ -303,7 +303,7 @@
     },
     {
       "id": "image_13",
-      "filename": "images/image_13.jpg",
+      "filename": "web/images/image_13.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -328,7 +328,7 @@
     },
     {
       "id": "image_14",
-      "filename": "images/image_14.jpg",
+      "filename": "web/images/image_14.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -353,7 +353,7 @@
     },
     {
       "id": "image_15",
-      "filename": "images/image_15.jpg",
+      "filename": "web/images/image_15.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -378,7 +378,7 @@
     },
     {
       "id": "image_16",
-      "filename": "images/image_16.jpg",
+      "filename": "web/images/image_16.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -403,7 +403,7 @@
     },
     {
       "id": "image_17",
-      "filename": "images/image_17.jpg",
+      "filename": "web/images/image_17.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -428,7 +428,7 @@
     },
     {
       "id": "image_18",
-      "filename": "images/image_18.jpg",
+      "filename": "web/images/image_18.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -453,7 +453,7 @@
     },
     {
       "id": "image_19",
-      "filename": "images/image_19.jpg",
+      "filename": "web/images/image_19.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -478,7 +478,7 @@
     },
     {
       "id": "image_20",
-      "filename": "images/image_20.jpg",
+      "filename": "web/images/image_20.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -503,7 +503,7 @@
     },
     {
       "id": "image_21",
-      "filename": "images/image_21.jpg",
+      "filename": "web/images/image_21.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -528,7 +528,7 @@
     },
     {
       "id": "image_22",
-      "filename": "images/image_22.jpg",
+      "filename": "web/images/image_22.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -553,7 +553,7 @@
     },
     {
       "id": "image_23",
-      "filename": "images/image_23.jpg",
+      "filename": "web/images/image_23.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -578,7 +578,7 @@
     },
     {
       "id": "image_24",
-      "filename": "images/image_24.jpg",
+      "filename": "web/images/image_24.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -603,7 +603,7 @@
     },
     {
       "id": "image_25",
-      "filename": "images/image_25.jpg",
+      "filename": "web/images/image_25.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -628,7 +628,7 @@
     },
     {
       "id": "image_26",
-      "filename": "images/image_26.jpg",
+      "filename": "web/images/image_26.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -653,7 +653,7 @@
     },
     {
       "id": "image_27",
-      "filename": "images/image_27.jpg",
+      "filename": "web/images/image_27.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -678,7 +678,7 @@
     },
     {
       "id": "image_28",
-      "filename": "images/image_28.jpg",
+      "filename": "web/images/image_28.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -703,7 +703,7 @@
     },
     {
       "id": "image_29",
-      "filename": "images/image_29.jpg",
+      "filename": "web/images/image_29.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -728,7 +728,7 @@
     },
     {
       "id": "image_30",
-      "filename": "images/image_30.jpg",
+      "filename": "web/images/image_30.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -753,7 +753,7 @@
     },
     {
       "id": "image_31",
-      "filename": "images/image_31.jpg",
+      "filename": "web/images/image_31.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -778,7 +778,7 @@
     },
     {
       "id": "image_32",
-      "filename": "images/image_32.jpg",
+      "filename": "web/images/image_32.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -803,7 +803,7 @@
     },
     {
       "id": "image_33",
-      "filename": "images/image_33.jpg",
+      "filename": "web/images/image_33.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 2,
@@ -828,7 +828,7 @@
     },
     {
       "id": "image_34",
-      "filename": "images/image_34.jpg",
+      "filename": "web/images/image_34.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -853,7 +853,7 @@
     },
     {
       "id": "image_35",
-      "filename": "images/image_35.jpg",
+      "filename": "web/images/image_35.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
@@ -878,7 +878,7 @@
     },
     {
       "id": "image_36",
-      "filename": "images/image_36.jpg",
+      "filename": "web/images/image_36.jpg",
       "features": {
         "batman logo": 0,
         "blue plane": 0,
