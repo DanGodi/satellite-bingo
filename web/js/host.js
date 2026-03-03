@@ -18,20 +18,27 @@ let cards = null;
  */
 async function initGame() {
   try {
+    console.log('initGame() starting...');
     // Load data
+    console.log('Loading dataset...');
     dataset = await loadDataset();
+    console.log('Dataset loaded, loading cards...');
     cards = await loadCards();
+    console.log('Cards loaded, creating game state...');
 
     // Create game state
     gameState = new GameState(dataset, cards);
+    console.log('GameState created');
 
     // Update UI
+    console.log('Updating UI...');
     document.getElementById('totalTurns').textContent = dataset.images.length;
     updateProgressDisplay();
 
     console.log('Game initialized with', dataset.images.length, 'images and', cards.length, 'cards');
   } catch (error) {
     console.error('Failed to initialize game:', error);
+    console.error('Error details:', error.message, error.stack);
     alert('Failed to load game data. Please refresh the page.');
   }
 }

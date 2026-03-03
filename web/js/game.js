@@ -202,11 +202,15 @@ class GameState {
  * @returns {Promise<object>} The parsed dataset
  */
 async function loadDataset() {
+  console.log('Loading dataset from: web/data/dataset.json');
   const response = await fetch('web/data/dataset.json');
+  console.log('Dataset fetch response:', response.status, response.statusText);
   if (!response.ok) {
     throw new Error(`Failed to load dataset.json: ${response.statusText}`);
   }
-  return await response.json();
+  const data = await response.json();
+  console.log('Dataset loaded successfully:', data.images.length, 'images');
+  return data;
 }
 
 /**
