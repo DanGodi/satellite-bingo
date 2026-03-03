@@ -234,6 +234,22 @@ class PeerManager {
   }
 
   /**
+   * Send a message to a specific player (host only).
+   */
+  sendToPlayer(peerId, data) {
+    if (!this.isHost) {
+      console.warn('sendToPlayer() can only be called by the host');
+      return;
+    }
+    const conn = this.playerConnections.get(peerId);
+    if (conn && conn.open) {
+      conn.send(data);
+    } else {
+      console.warn(`Cannot send to player ${peerId}: connection not open`);
+    }
+  }
+
+  /**
    * Disconnect all connections.
    */
   disconnect() {

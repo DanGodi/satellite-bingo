@@ -14,73 +14,149 @@
     </header>
 
     <div class="game-view">
-      <!-- Share Game Info Section -->
-      <div id="shareInfoSection" style="display: none; background: #e0f2fe; border: 2px solid #0284c7; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-        <h3 style="margin-top: 0; color: #0c4a6e; text-align: center;">📍 Share This With Players</h3>
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-          <div style="background: white; padding: 12px 16px; border-radius: 6px; border: 1px solid #0284c7; font-size: 0.95em; font-family: monospace; color: #0284c7; flex: 1; word-break: break-all;" id="hostIdDisplay">Connecting...</div>
-          <button onclick="copyHostId()" id="copyBtn" style="padding: 12px 16px; font-size: 0.9em; white-space: nowrap; flex-shrink: 0;">📋 Copy</button>
-        </div>
-        <p style="margin: 0; color: #0c4a6e; font-size: 0.9em; text-align: center;">
-          👉 Players paste this on <strong>player.html</strong> to join.
-          &nbsp;&nbsp;<strong>Connected: <span id="connectedPlayersCount">0</span></strong>
-        </p>
-      </div>
 
-      <!-- Header bar with turn counter and controls -->
-      <div class="game-header">
-        <h1 style="font-size: 1.5em;">Game In Progress</h1>
-        <div class="turn-counter" id="turnInfo">
-          Turn <span id="currentTurn">0</span> / <span id="totalTurns">36</span>
+      <!-- ===== LOBBY SECTION ===== -->
+      <div id="lobbySection">
+        <!-- Game Code & Share -->
+        <div style="background: #e0f2fe; border: 2px solid #0284c7; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+          <h3 style="margin-top: 0; color: #0c4a6e; text-align: center;">📍 Game Code</h3>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <div style="background: white; padding: 12px 16px; border-radius: 6px; border: 1px solid #0284c7; font-size: 0.95em; font-family: monospace; color: #0284c7; flex: 1; word-break: break-all;" id="gameCodeDisplay">Initializing...</div>
+            <button onclick="copyGameCode()" id="copyGameCodeBtn" style="padding: 12px 16px; font-size: 0.9em; white-space: nowrap; flex-shrink: 0;">📋 Copy</button>
+          </div>
+          <p style="margin: 0; color: #0c4a6e; font-size: 0.9em; text-align: center;">
+            👉 Players paste this on <strong>player.html</strong> to join.
+          </p>
         </div>
-        <button id="nextImageBtn" onclick="hostAdvanceTurn()" style="margin-left: auto;">
-          Next Image →
-        </button>
-        <button class="secondary" onclick="hostResetGame()">Reset Game</button>
-      </div>
 
-      <!-- Image display area -->
-      <div class="image-display">
-        <div id="imageContainer" style="position: relative;">
-          <img id="gameImage" alt="Satellite image" style="display: none; width: 100%;">
-          <div id="noImageState" class="empty-state">
-            <h3>Click "Next Image" to begin the game</h3>
-            <p>36 satellite images will be revealed one at a time.</p>
+        <!-- Difficulty Picker -->
+        <div style="margin-bottom: 20px;">
+          <label for="difficultySelect" style="display: block; margin-bottom: 8px; font-weight: 500;">Select Difficulty:</label>
+          <select id="difficultySelect" style="padding: 10px; font-size: 1em; border-radius: 6px; border: 1px solid var(--border-color); width: 100%; max-width: 300px;">
+            <option value="auto">Auto (recommended)</option>
+            <option value="easy">Easy (27 turns)</option>
+            <option value="medium">Medium (37 turns)</option>
+            <option value="hard">Hard (47 turns)</option>
+          </select>
+        </div>
+
+        <!-- Player Lobby List -->
+        <div style="margin-bottom: 20px;">
+          <h3>Connected Players (<span id="lobbyPlayerCount">0</span>):</h3>
+          <div id="lobbyPlayerList" style="background: #f3f4f6; border-radius: 6px; padding: 15px; min-height: 60px;">
+            <p style="color: #6b7280; margin: 0;">Waiting for players...</p>
           </div>
         </div>
-        <div class="image-id" id="imageIdDisplay" style="display: none;"></div>
+
+        <!-- Start Game Button -->
+        <button id="startGameBtn" onclick="hostStartGame()" disabled style="width: 100%; padding: 15px; font-size: 1.1em; margin-top: 20px;">
+          🚀 Start Game (Need ≥2 ready players)
+        </button>
       </div>
 
-      <!-- Events that fired this turn -->
-      <div id="eventsSection" style="display: none;">
-        <div class="events-panel">
-          <h3>✓ Events Fired This Turn</h3>
-          <div class="events-chips" id="eventsList"></div>
+      <!-- ===== GENERATING SECTION ===== -->
+      <div id="generatingSection" style="display: none;">
+        <h3>Generating Cards...</h3>
+        <div style="background: #f3f4f6; border-radius: 6px; padding: 20px;">
+          <div style="width: 100%; height: 20px; background: #e5e7eb; border-radius: 10px; overflow: hidden;">
+            <div id="generatingProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #0284c7); transition: width 0.3s;"></div>
+          </div>
+          <p id="generatingStatus" style="text-align: center; margin-top: 15px; color: #4b5563;">Generating balanced cards...</p>
         </div>
       </div>
 
-      <!-- Card progress display -->
-      <div class="progress-section">
-        <h3>Card Progress</h3>
-        <div class="card-progress" id="cardProgressContainer">
-          <!-- Populated by JavaScript -->
+      <!-- ===== GAME SECTION ===== -->
+      <div id="gameSection" style="display: none;">
+        <!-- Share Game Info Section -->
+        <div id="shareInfoSection" style="background: #e0f2fe; border: 2px solid #0284c7; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+          <h3 style="margin-top: 0; color: #0c4a6e; text-align: center;">📍 Players Connected</h3>
+          <p style="margin: 0; color: #0c4a6e; font-size: 0.95em; text-align: center;">
+            <strong>Connected: <span id="connectedPlayersCount">0</span> players</strong>
+          </p>
+        </div>
+
+        <!-- Header bar with turn counter and controls -->
+        <div class="game-header">
+          <h1 style="font-size: 1.5em;">Game In Progress</h1>
+          <div class="turn-counter" id="turnInfo">
+            Turn <span id="currentTurn">0</span> / <span id="totalTurns">36</span>
+          </div>
+          <button id="nextImageBtn" onclick="hostAdvanceTurn()" style="margin-left: auto;">
+            Next Image →
+          </button>
+          <button class="secondary" onclick="hostResetGame()">Reset Game</button>
+        </div>
+
+        <!-- Image display area -->
+        <div class="image-display">
+          <div id="imageContainer" style="position: relative;">
+            <img id="gameImage" alt="Satellite image" style="display: none; width: 100%;">
+            <div id="noImageState" class="empty-state">
+              <h3>Click "Next Image" to begin the game</h3>
+              <p>36 satellite images will be revealed one at a time.</p>
+            </div>
+          </div>
+          <div class="image-id" id="imageIdDisplay" style="display: none;"></div>
+        </div>
+
+        <!-- Events that fired this turn -->
+        <div id="eventsSection" style="display: none;">
+          <div class="events-panel">
+            <h3>✓ Events Fired This Turn</h3>
+            <div class="events-chips" id="eventsList"></div>
+          </div>
+        </div>
+
+        <!-- Card progress display -->
+        <div class="progress-section">
+          <h3>Card Progress</h3>
+          <div class="card-progress" id="cardProgressContainer">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Verified Winners -->
+        <div id="winnersSection" style="display: none;">
+          <div style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; padding: 30px; border-radius: 8px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+            <h2 style="font-size: 2.5em; margin-bottom: 10px;">🎉 BINGO! 🎉</h2>
+            <p id="winnerMessage" style="font-size: 1.2em;"><span id="winnerCount">0</span> winners verified so far...</p>
+          </div>
         </div>
       </div>
 
-      <!-- Winners announcement -->
-      <div id="winnersSection" style="display: none;">
-        <div style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; padding: 30px; border-radius: 8px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
-          <h2 style="font-size: 2.5em; margin-bottom: 10px;">🎉 BINGO! 🎉</h2>
-          <p id="winnerMessage" style="font-size: 1.2em;">Card <span id="winnerCardId"></span> has won!</p>
+      <!-- ===== END GAME SECTION ===== -->
+      <div id="endGameSection" style="display: none;">
+        <h2 style="text-align: center; margin-bottom: 30px;">🏆 Game Over! 🏆</h2>
+
+        <!-- Winners List -->
+        <div style="background: #dcfce7; border: 2px solid #16a34a; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+          <h3 style="color: #15803d; margin-top: 0;">Winners</h3>
+          <div id="endGameWinnersList" style="color: #166534;"></div>
         </div>
+
+        <!-- Chart -->
+        <div style="background: #f3f4f6; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+          <h3>Squares Completed vs Images Shown</h3>
+          <div style="position: relative; height: 300px;">
+            <canvas id="endGameChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Reset Button -->
+        <button onclick="location.href='index.html'" style="width: 100%; padding: 15px; font-size: 1.1em;">
+          Back to Home
+        </button>
       </div>
+
     </div>
   </div>
 
   <!-- Load required JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="web/js/events.js"></script>
   <script src="web/js/game.js"></script>
+  <script src="web/js/card-generator.js"></script>
   <script src="web/js/peer-connection.js"></script>
   <script src="web/js/host.js"></script>
 </body>

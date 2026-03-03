@@ -14,19 +14,20 @@
     </header>
 
     <div class="game-view">
-      <!-- Join Game Section -->
+
+      <!-- ===== JOIN SECTION ===== -->
       <div id="joinSection" class="card" style="max-width: 600px; margin: 0 auto 20px;">
         <h2>Join a Game</h2>
         <p style="color: #6b7280; margin-bottom: 20px;">
-          Paste the Host ID from the host's screen.
+          Get the Game Code from the host and enter your name.
         </p>
 
         <div style="margin-bottom: 20px;">
-          <label for="hostIdInput" style="display: block; margin-bottom: 5px; font-weight: 600;">Host ID:</label>
+          <label for="gameCodeInput" style="display: block; margin-bottom: 5px; font-weight: 600;">Game Code:</label>
           <input
-            id="hostIdInput"
+            id="gameCodeInput"
             type="text"
-            placeholder="Paste host ID here"
+            placeholder="Paste game code here"
             style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.95em; font-family: monospace;"
           />
           <p style="color: #9ca3af; font-size: 0.85em; margin-top: 5px;">
@@ -34,24 +35,42 @@
           </p>
         </div>
 
+        <div style="margin-bottom: 20px;">
+          <label for="playerNameInput" style="display: block; margin-bottom: 5px; font-weight: 600;">Your Name:</label>
+          <input
+            id="playerNameInput"
+            type="text"
+            placeholder="Enter your name (max 20 chars)"
+            maxlength="20"
+            style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.95em;"
+          />
+        </div>
+
         <button onclick="playerJoinGame()" style="width: 100%; padding: 12px; margin-bottom: 10px;">
-          🎮 Join Game
+          🎮 Join & Ready
         </button>
         <button class="secondary" onclick="window.location.href='index.html'" style="width: 100%; padding: 12px;">
           Back to Home
         </button>
       </div>
 
-      <!-- Loading/Connection Status -->
-      <div id="connectingSection" style="display: none; max-width: 600px; margin: 0 auto 20px;">
+      <!-- ===== WAITING SECTION ===== -->
+      <div id="waitingSection" style="display: none; max-width: 600px; margin: 0 auto;">
         <div class="card">
-          <h3 style="text-align: center;">Connecting to host...</h3>
-          <p style="text-align: center; color: #6b7280;">
-            <span id="connectionStatus">Initializing...</span>
-          </p>
-          <div style="text-align: center; margin-top: 10px;">
-            <span class="spinner" style="display: inline-block; width: 20px; height: 20px; border: 3px solid #e5e7eb; border-top: 3px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite;"></span>
+          <h3 style="text-align: center; margin-top: 0;">Waiting for Game to Start...</h3>
+
+          <div style="margin-bottom: 20px;">
+            <h4>Connected Players:</h4>
+            <div id="waitingPlayerList" style="background: #f3f4f6; border-radius: 6px; padding: 15px; min-height: 60px;">
+              <p style="color: #6b7280; margin: 0;">Connecting...</p>
+            </div>
           </div>
+
+          <div style="text-align: center; margin-top: 20px;">
+            <span class="spinner" style="display: inline-block; width: 20px; height: 20px; border: 3px solid #e5e7eb; border-top: 3px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite;"></span>
+            <p style="color: #6b7280; margin-top: 10px;">Waiting for host to start...</p>
+          </div>
+
           <style>
             @keyframes spin {
               0% { transform: rotate(0deg); }
@@ -61,23 +80,14 @@
         </div>
       </div>
 
-      <!-- Card selector (shown after joining) -->
+      <!-- ===== GAME SECTION ===== -->
       <div id="gameSection" style="display: none;">
-        <div class="card">
-          <div class="card-selector">
-            <label for="cardSelect">Select Your Card:</label>
-            <select id="cardSelect" onchange="playerSelectCard()">
-              <option value="">-- Choose a card --</option>
-            </select>
-          </div>
-        </div>
-
         <!-- Bingo card display -->
-        <div id="cardContainer" style="display: none;">
+        <div id="cardContainer">
           <div class="bingo-card" id="bingoCard">
             <div class="card-header">
-              <h3 id="cardTitle">Card</h3>
-              <div id="bingoLabel" class="bingo-label" style="display: none;">✓ BINGO!</div>
+              <h3 id="cardTitle">Your Card</h3>
+              <div id="bingoLabel" class="bingo-label" style="display: none;">✓ ALL MARKED!</div>
             </div>
             <div class="card-grid" id="cardGrid">
               <!-- Populated by JavaScript -->
@@ -92,25 +102,62 @@
               Clear Card
             </button>
           </div>
+
+          <!-- Claim status -->
+          <div id="claimStatusDiv" style="display: none; margin-top: 20px; padding: 15px; border-radius: 6px; text-align: center;">
+            <p id="claimStatusText"></p>
+          </div>
         </div>
 
         <!-- Instructions -->
-        <div id="instructionsCard" class="card">
+        <div style="margin-top: 30px; padding: 20px; background: #f3f4f6; border-radius: 6px;">
           <h3>How to Play</h3>
-          <ol style="margin-left: 20px; line-height: 2;">
-            <li><strong>Select your card</strong> from the dropdown above</li>
-            <li><strong>Watch the host screen</strong> as images are revealed</li>
-            <li><strong>Click squares</strong> on your card when you see the matching events</li>
-            <li><strong>Get 10 in a row</strong> (all squares marked) and click "CLAIM BINGO!"</li>
-            <li><strong>Or use automatic mode:</strong> Events auto-mark when the host reveals them (requires synchronized timing)</li>
+          <ol style="margin-left: 20px; line-height: 2; color: #4b5563;">
+            <li><strong>Watch the host screen</strong> as satellite images are revealed</li>
+            <li><strong>Squares auto-mark</strong> when events fire (host broadcasts them)</li>
+            <li><strong>Click to manually mark</strong> any squares you think the host missed</li>
+            <li><strong>When all 10 squares are marked</strong>, the "CLAIM BINGO!" button activates</li>
+            <li><strong>Click "CLAIM BINGO!"</strong> and wait for the host to verify your win</li>
           </ol>
         </div>
       </div>
+
+      <!-- ===== END GAME SECTION ===== -->
+      <div id="endGameSection" style="display: none;">
+        <h2 style="text-align: center; margin-bottom: 30px;">🏆 Game Over! 🏆</h2>
+
+        <!-- Your Rank -->
+        <div id="playerRankDiv" style="background: #dcfce7; border: 2px solid #16a34a; border-radius: 8px; padding: 20px; margin-bottom: 30px; text-align: center;">
+          <h3 style="color: #15803d; margin-top: 0;">Your Rank</h3>
+          <p id="playerRankText" style="color: #166534; font-size: 1.3em; margin: 0;"></p>
+        </div>
+
+        <!-- Winners List -->
+        <div style="background: #e0f2fe; border: 2px solid #0284c7; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+          <h3 style="color: #0c4a6e; margin-top: 0;">Game Winners</h3>
+          <div id="endGameWinnersList" style="color: #075985;"></div>
+        </div>
+
+        <!-- Chart -->
+        <div style="background: #f3f4f6; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+          <h3>Squares Completed vs Images Shown</h3>
+          <div style="position: relative; height: 300px;">
+            <canvas id="endGameChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Home Button -->
+        <button onclick="location.href='index.html'" style="width: 100%; padding: 15px; font-size: 1.1em;">
+          Back to Home
+        </button>
+      </div>
+
     </div>
   </div>
 
   <!-- Load required JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="web/js/events.js"></script>
   <script src="web/js/game.js"></script>
   <script src="web/js/peer-connection.js"></script>
