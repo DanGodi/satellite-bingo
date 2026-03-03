@@ -23,7 +23,7 @@ async function initPlayer() {
   try {
     // Load data
     dataset = await loadDataset();
-    cards = await loadCards();
+    cards = await getCards();
 
     // Populate card selector
     const select = document.getElementById('cardSelect');

@@ -23,7 +23,7 @@ async function initGame() {
     console.log('Loading dataset...');
     dataset = await loadDataset();
     console.log('Dataset loaded, loading cards...');
-    cards = await loadCards();
+    cards = await getCards();
     console.log('Cards loaded, creating game state...');
 
     // Create game state

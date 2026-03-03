@@ -214,7 +214,7 @@ async function loadDataset() {
 }
 
 /**
- * Load cards.json from the web/data directory.
+ * Load cards.json from the web/data directory (default cards).
  *
  * @returns {Promise<array>} Array of bingo card objects
  */
@@ -224,4 +224,25 @@ async function loadCards() {
     throw new Error(`Failed to load cards.json: ${response.statusText}`);
   }
   return await response.json();
+}
+
+/**
+ * Get cards - either generated (from localStorage) or default (from file).
+ * This is the main entry point for loading cards.
+ *
+ * @returns {Promise<array>} Array of bingo card objects
+ */
+async function getCards() {
+  // Check for generated cards in localStorage
+  const generatedCards = localStorage.getItem('bingo_generated_cards');
+  if (generatedCards) {
+    try {
+      return JSON.parse(generatedCards);
+    } catch (e) {
+      console.warn('Failed to parse generated cards from localStorage, loading defaults');
+    }
+  }
+
+  // Fall back to default cards
+  return await loadCards();
 }

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Segmentation Bingo - Setup</title>
+  <link rel="stylesheet" href="web/css/style.css">
+</head>
+<body>
+  <div class="container" style="margin-top: 40px;">
+    <header>
+      <h1>🛰️ Segmentation Bingo</h1>
+      <p>Setup - Generate Cards</p>
+    </header>
+
+    <div id="setupForm" class="card" style="max-width: 600px; margin: 0 auto;">
+      <h2>How many players?</h2>
+      <p style="color: #6b7280; margin-bottom: 30px;">
+        Each player will receive a unique bingo card tailored to their difficulty level.
+      </p>
+
+      <div style="margin-bottom: 30px;">
+        <label for="playerCountSlider" style="display: block; margin-bottom: 10px; font-weight: 600;">
+          Number of Players: <span id="playerCount">4</span>
+        </label>
+        <input
+          id="playerCountSlider"
+          type="range"
+          min="2"
+          max="100"
+          value="4"
+          oninput="updatePlayerCount(this.value)"
+          style="width: 100%; height: 8px; cursor: pointer;"
+        />
+        <div style="display: flex; justify-content: space-between; font-size: 0.85em; color: #9ca3af; margin-top: 5px;">
+          <span>2</span>
+          <span>50</span>
+          <span>100</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 30px;">
+        <label style="display: block; margin-bottom: 10px; font-weight: 600;">Difficulty</label>
+        <select id="difficultySelect" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 1em;">
+          <option value="auto">Auto-calculate (Recommended)</option>
+          <option value="easy">Easy (25-30 turns)</option>
+          <option value="medium">Medium (35-40 turns)</option>
+          <option value="hard">Hard (45-50 turns)</option>
+        </select>
+      </div>
+
+      <button id="generateBtn" onclick="startGeneration()" style="width: 100%; padding: 14px; margin-bottom: 10px;">
+        ⚡ Generate Cards
+      </button>
+      <button class="secondary" onclick="window.location.href='index.html'" style="width: 100%; padding: 14px;">
+        Back to Home
+      </button>
+    </div>
+
+    <!-- Generation Progress -->
+    <div id="progressSection" style="display: none; max-width: 600px; margin: 40px auto;">
+      <div class="card">
+        <h3 style="margin-bottom: 20px;">Generating Cards...</h3>
+
+        <div id="progressStage" style="margin-bottom: 15px; color: #6b7280;"></div>
+
+        <div style="margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span id="progressLabel">Initializing...</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div style="height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+            <div
+              id="progressBar"
+              style="height: 100%; background: linear-gradient(90deg, #2563eb, #16a34a); width: 0%; transition: width 0.3s;"
+            ></div>
+          </div>
+        </div>
+
+        <div id="progressLog" style="background: #f3f4f6; padding: 12px; border-radius: 6px; max-height: 200px; overflow-y: auto; font-size: 0.85em; font-family: monospace; color: #4b5563; line-height: 1.5;"></div>
+      </div>
+    </div>
+
+    <!-- Success Screen -->
+    <div id="successSection" style="display: none; max-width: 600px; margin: 40px auto;">
+      <div class="card" style="background: #f0fdf4; border-left: 4px solid #16a34a;">
+        <h2 style="color: #15803d; margin-bottom: 15px;">✓ Cards Generated!</h2>
+        <p style="margin-bottom: 20px; color: #4b5563;">
+          <span id="successCardCount">4</span> balanced bingo cards have been created and are ready to play.
+        </p>
+        <div style="display: flex; gap: 10px;">
+          <button class="success" onclick="window.location.href='host.html'" style="flex: 1; padding: 12px;">
+            🎮 Start as Host
+          </button>
+          <button class="secondary" onclick="window.location.href='player.html'" style="flex: 1; padding: 12px;">
+            👤 Join as Player
+          </button>
+        </div>
+        <button class="secondary" onclick="window.location.href='setup.html'" style="width: 100%; padding: 12px; margin-top: 10px;">
+          Generate New Cards
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load required JavaScript -->
+  <script src="web/js/game.js"></script>
+  <script src="web/js/card-generator.js"></script>
+  <script src="web/js/setup.js"></script>
+</body>
+</html>
