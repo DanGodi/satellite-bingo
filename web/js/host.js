@@ -56,15 +56,24 @@ async function initGame() {
     // Initialize P2P if we have game info
     if (hostGameInfo) {
       try {
+        console.log('Initializing P2P host with code:', hostGameInfo.gameCode);
         peerManager = new PeerManager();
         // Game code already created in setup.js, just set it
         peerManager.gameCode = hostGameInfo.gameCode;
+
         peerManager.peer = new Peer(hostGameInfo.peerId, {
-          debug: 0,
+          debug: 1,
+          host: 'peerjs-server.herokuapp.com',
+          secure: true,
+          port: 443,
+          path: '/',
           config: {
             iceServers: [
               { urls: 'stun:stun.l.google.com:19302' },
-              { urls: 'stun:stun1.l.google.com:19302' }
+              { urls: 'stun:stun1.l.google.com:19302' },
+              { urls: 'stun:stun2.l.google.com:19302' },
+              { urls: 'stun:stun3.l.google.com:19302' },
+              { urls: 'stun:stun4.l.google.com:19302' }
             ]
           }
         });
@@ -73,15 +82,23 @@ async function initGame() {
         peerManager.playerConnections = new Map();
 
         peerManager.peer.on('connection', (conn) => {
+          console.log('Player connecting:', conn.peer);
           handlePlayerConnection(conn);
         });
 
-        // Display game code and peer ID
-        document.getElementById('gameCodeDisplay').textContent = hostGameInfo.gameCode;
-        document.getElementById('hostPeerIdDisplay').textContent = hostGameInfo.peerId;
-        document.getElementById('shareInfoSection').style.display = 'block';
+        peerManager.peer.on('error', (err) => {
+          console.error('Host P2P error:', err.type, err.message);
+        });
 
-        console.log('P2P host initialized. Game code:', hostGameInfo.gameCode);
+        peerManager.peer.on('open', () => {
+          console.log('✓ Host peer ready. Displaying share info...');
+          // Display game code and peer ID
+          document.getElementById('gameCodeDisplay').textContent = hostGameInfo.gameCode;
+          document.getElementById('hostPeerIdDisplay').textContent = hostGameInfo.peerId;
+          document.getElementById('shareInfoSection').style.display = 'block';
+        });
+
+        console.log('P2P host initialization started. Game code:', hostGameInfo.gameCode);
       } catch (error) {
         console.error('Failed to initialize P2P:', error);
       }

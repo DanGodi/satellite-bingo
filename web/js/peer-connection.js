@@ -42,6 +42,7 @@ class PeerManager {
   initializePeer() {
     return new Promise((resolve, reject) => {
       if (this.peer) {
+        console.log('Peer already initialized');
         resolve();
         return;
       }
@@ -49,30 +50,52 @@ class PeerManager {
       // Generate a unique peer ID for this browser instance
       const peerId = `${this.generateGameCode()}-${Date.now()}`;
 
-      this.peer = new Peer(peerId, {
-        debug: 0, // Set to 2 for debugging
-        config: {
-          iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' }
-          ]
-        }
-      });
+      console.log('Initializing PeerJS with ID:', peerId);
 
-      this.peer.on('error', (err) => {
-        console.error('PeerJS error:', err);
-        reject(err);
-      });
+      try {
+        this.peer = new Peer(peerId, {
+          debug: 1, // Set to 1 for basic logging
+          host: 'peerjs-server.herokuapp.com',
+          secure: true,
+          port: 443,
+          path: '/',
+          config: {
+            iceServers: [
+              { urls: 'stun:stun.l.google.com:19302' },
+              { urls: 'stun:stun1.l.google.com:19302' },
+              { urls: 'stun:stun2.l.google.com:19302' },
+              { urls: 'stun:stun3.l.google.com:19302' },
+              { urls: 'stun:stun4.l.google.com:19302' }
+            ]
+          }
+        });
 
-      this.peer.on('connection', (conn) => {
-        this.handleIncomingConnection(conn);
-      });
+        this.peer.on('error', (err) => {
+          console.error('PeerJS error:', err.type, err.message);
+          reject(err);
+        });
 
-      // Wait for peer to be ready
-      this.peer.on('open', () => {
-        console.log('Peer initialized with ID:', peerId);
-        resolve();
-      });
+        this.peer.on('connection', (conn) => {
+          console.log('Incoming connection from:', conn.peer);
+          this.handleIncomingConnection(conn);
+        });
+
+        // Wait for peer to be ready
+        this.peer.on('open', () => {
+          console.log('✓ Peer initialized successfully with ID:', peerId);
+          resolve();
+        });
+
+        // Timeout if peer doesn't initialize
+        setTimeout(() => {
+          if (!this.peer?.id) {
+            reject(new Error('PeerJS initialization timeout - could not reach signaling server'));
+          }
+        }, 10000);
+      } catch (error) {
+        console.error('Failed to create Peer instance:', error);
+        reject(error);
+      }
     });
   }
 

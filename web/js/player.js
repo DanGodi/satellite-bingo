@@ -38,6 +38,7 @@ async function playerJoinGame() {
 
   try {
     // Initialize peer manager
+    document.getElementById('connectionStatus').textContent = 'Initializing your peer ID...';
     peerManager = new PeerManager();
     await peerManager.joinGame(gameCode, hostPeerId);
 
@@ -58,10 +59,20 @@ async function playerJoinGame() {
     console.log('Connected to host, awaiting cards...');
   } catch (error) {
     console.error('Failed to join game:', error);
-    document.getElementById('connectionStatus').textContent = `❌ ${error.message}`;
+    console.error('Error details:', error.message, error.type);
+
+    let errorMsg = error.message;
+    if (error.message.includes('timeout')) {
+      errorMsg = 'Host not responding. Make sure host has shared the CORRECT peer ID and is currently online.';
+    } else if (error.message.includes('Signaling server')) {
+      errorMsg = 'Cannot reach signaling server. Check your internet connection.';
+    }
+
+    document.getElementById('connectionStatus').textContent = `❌ ${errorMsg}`;
     document.getElementById('connectingSection').style.display = 'none';
     document.getElementById('joinSection').style.display = 'block';
-    alert('Failed to join game: ' + error.message);
+
+    alert(`Connection failed:\n\n${errorMsg}\n\nDebug: ${error.message}`);
   }
 }
 
