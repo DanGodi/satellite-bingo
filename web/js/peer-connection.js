@@ -54,15 +54,15 @@ class PeerManager {
 
       try {
         this.peer = new Peer(peerId, {
-          debug: 1, // Set to 1 for basic logging
-          // Use PeerJS cloud default server
+          debug: 1,
           config: {
             iceServers: [
               { urls: 'stun:stun.l.google.com:19302' },
               { urls: 'stun:stun1.l.google.com:19302' },
-              { urls: 'stun:stun2.l.google.com:19302' },
-              { urls: 'stun:stun3.l.google.com:19302' },
-              { urls: 'stun:stun4.l.google.com:19302' }
+              // TURN relay servers — fallback when direct P2P fails (symmetric NAT, strict firewalls)
+              { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+              { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
+              { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
             ]
           }
         });
@@ -134,23 +134,37 @@ class PeerManager {
     });
 
     return new Promise((resolve, reject) => {
+      let settled = false;
+      const settle = (fn, val) => {
+        if (!settled) { settled = true; fn(val); }
+      };
+
+      // peer-unavailable fires immediately when the host peer ID doesn't exist
+      const onPeerError = (err) => {
+        if (err.type === 'peer-unavailable') {
+          settle(reject, new Error('Host not found. Make sure the host is on host.html and the Peer ID is correct.'));
+        }
+      };
+      this.peer.on('error', onPeerError);
+
       this.hostConnection.on('open', () => {
+        this.peer.off('error', onPeerError);
         console.log('Connected to host');
-        resolve();
+        settle(resolve, undefined);
       });
 
       this.hostConnection.on('error', (err) => {
         console.error('Connection error:', err);
-        reject(err);
+        settle(reject, err);
       });
 
       this.hostConnection.on('data', (data) => {
         this.handleMessage(data);
       });
 
-      // Timeout after 15 seconds
+      // Timeout after 15 seconds (NAT traversal can be slow)
       setTimeout(() => {
-        reject(new Error('Connection timeout - could not reach host'));
+        settle(reject, new Error('Connection timeout - could not reach host'));
       }, 15000);
     });
   }

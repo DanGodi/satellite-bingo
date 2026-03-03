@@ -157,12 +157,8 @@ async function startGeneration() {
     // Host.html will make the actual PeerJS connection
     const helper = new PeerManager();
     const gameCode = helper.generateGameCode();
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let peerId = '';
-    for (let i = 0; i < 20; i++) {
-      peerId += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    gameInfo = { gameCode, peerId };
+    // Peer ID = game code: players only need to enter one thing to join
+    gameInfo = { gameCode, peerId: gameCode };
     document.getElementById('gameCodeDisplay').textContent = gameCode;
     logProgress('✓ Game code generated: ' + gameCode);
 

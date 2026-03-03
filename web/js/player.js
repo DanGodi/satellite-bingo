@@ -24,10 +24,9 @@ const STORAGE_KEY_PREFIX = 'bingo_player_';
  */
 async function playerJoinGame() {
   const gameCode = document.getElementById('gameCodeInput').value.trim().toUpperCase();
-  const hostPeerId = document.getElementById('hostPeerIdInput').value.trim();
 
-  if (!gameCode || !hostPeerId) {
-    alert('Please enter both game code and host peer ID');
+  if (!gameCode) {
+    alert('Please enter the game code');
     return;
   }
 
@@ -37,10 +36,10 @@ async function playerJoinGame() {
   document.getElementById('connectionStatus').textContent = 'Initializing peer connection...';
 
   try {
-    // Initialize peer manager
-    document.getElementById('connectionStatus').textContent = 'Initializing your peer ID...';
+    // Initialize peer manager — peer ID equals the game code
+    document.getElementById('connectionStatus').textContent = 'Connecting to host...';
     peerManager = new PeerManager();
-    await peerManager.joinGame(gameCode, hostPeerId);
+    await peerManager.joinGame(gameCode, gameCode);
 
     document.getElementById('connectionStatus').textContent = 'Connected! Loading cards from host...';
 
@@ -115,6 +114,19 @@ function handleHostMessage(data) {
       type: 'cards-received',
       cardCount: cards.length
     });
+  } else if (data.type === 'game-update') {
+    // Host advanced to next image — merge host's auto-markings into our card
+    if (data.cardMarkings && selectedCardId) {
+      const hostMarkings = data.cardMarkings[selectedCardId];
+      if (hostMarkings) {
+        const local = cardMarkings[selectedCardId];
+        for (let i = 0; i < hostMarkings.length; i++) {
+          if (hostMarkings[i]) local[i] = true; // OR: keep manual marks, add auto marks
+        }
+        displayCard(selectedCardId);
+        savePlayerState();
+      }
+    }
   }
 }
 
@@ -122,19 +134,15 @@ function handleHostMessage(data) {
  * Initialize on page load.
  */
 async function initPlayer() {
-  // Check if we should join a game or load local cards
+  // Auto-join if game code is in URL params (e.g. player.html?gameCode=ABC12)
   const urlParams = new URLSearchParams(window.location.search);
   const gameCode = urlParams.get('gameCode');
-  const hostPeerId = urlParams.get('hostPeerId');
 
-  if (gameCode && hostPeerId) {
-    // Auto-join from URL parameters
+  if (gameCode) {
     document.getElementById('gameCodeInput').value = gameCode;
-    document.getElementById('hostPeerIdInput').value = hostPeerId;
     playerJoinGame();
   }
 
-  // Player can also manually enter game code and peer ID
   console.log('Player view ready. Waiting for game code input or URL parameters.');
 }
 

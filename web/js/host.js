@@ -67,9 +67,10 @@ async function initGame() {
             iceServers: [
               { urls: 'stun:stun.l.google.com:19302' },
               { urls: 'stun:stun1.l.google.com:19302' },
-              { urls: 'stun:stun2.l.google.com:19302' },
-              { urls: 'stun:stun3.l.google.com:19302' },
-              { urls: 'stun:stun4.l.google.com:19302' }
+              // TURN relay servers — fallback when direct P2P fails (symmetric NAT, strict firewalls)
+              { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+              { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
+              { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
             ]
           }
         });
@@ -88,9 +89,7 @@ async function initGame() {
 
         peerManager.peer.on('open', () => {
           console.log('✓ Host peer ready. Displaying share info...');
-          // Display game code and peer ID
           document.getElementById('gameCodeDisplay').textContent = hostGameInfo.gameCode;
-          document.getElementById('hostPeerIdDisplay').textContent = hostGameInfo.peerId;
           document.getElementById('shareInfoSection').style.display = 'block';
         });
 

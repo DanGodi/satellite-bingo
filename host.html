@@ -15,21 +15,12 @@
 
     <div class="game-view">
       <!-- Share Game Info Section -->
-      <div id="shareInfoSection" style="display: none; background: #e0f2fe; border: 2px solid #0284c7; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-        <h3 style="margin-top: 0; color: #0c4a6e;">📍 Share This With Players</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-          <div>
-            <label style="display: block; font-weight: 600; color: #0c4a6e; margin-bottom: 5px;">Game Code:</label>
-            <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #0284c7; font-size: 1.3em; font-weight: bold; font-family: monospace; color: #0284c7; text-align: center;" id="gameCodeDisplay">LOADING...</div>
-          </div>
-          <div>
-            <label style="display: block; font-weight: 600; color: #0c4a6e; margin-bottom: 5px;">Peer ID:</label>
-            <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #0284c7; font-size: 0.9em; font-family: monospace; color: #0284c7; overflow: hidden; text-overflow: ellipsis;" id="hostPeerIdDisplay" title="Your peer ID for players to connect">LOADING...</div>
-          </div>
-        </div>
+      <div id="shareInfoSection" style="display: none; background: #e0f2fe; border: 2px solid #0284c7; border-radius: 8px; padding: 20px; margin-bottom: 20px; text-align: center;">
+        <h3 style="margin-top: 0; color: #0c4a6e;">📍 Share This Code With Players</h3>
+        <div style="background: white; padding: 16px; border-radius: 6px; border: 1px solid #0284c7; font-size: 2em; font-weight: bold; font-family: monospace; color: #0284c7; letter-spacing: 4px; margin-bottom: 12px;" id="gameCodeDisplay">LOADING...</div>
         <p style="margin: 0; color: #0c4a6e; font-size: 0.9em;">
-          👉 Players should enter these values on <strong>player.html</strong> to join your game.
-          <strong>Connected Players: <span id="connectedPlayersCount">0</span></strong>
+          👉 Players enter this on <strong>player.html</strong> to join.
+          &nbsp;&nbsp;<strong>Connected: <span id="connectedPlayersCount">0</span></strong>
         </p>
       </div>
 

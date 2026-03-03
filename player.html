@@ -18,31 +18,18 @@
       <div id="joinSection" class="card" style="max-width: 600px; margin: 0 auto 20px;">
         <h2>Join a Game</h2>
         <p style="color: #6b7280; margin-bottom: 20px;">
-          Enter the game code and host ID that your host shared with you.
+          Enter the game code your host shared with you.
         </p>
 
-        <div style="margin-bottom: 15px;">
+        <div style="margin-bottom: 20px;">
           <label for="gameCodeInput" style="display: block; margin-bottom: 5px; font-weight: 600;">Game Code:</label>
           <input
             id="gameCodeInput"
             type="text"
             placeholder="e.g., ABC12"
-            style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 1em; font-family: monospace;"
+            style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 1.2em; font-family: monospace; text-align: center; letter-spacing: 2px;"
             maxlength="10"
           />
-        </div>
-
-        <div style="margin-bottom: 20px;">
-          <label for="hostPeerIdInput" style="display: block; margin-bottom: 5px; font-weight: 600;">Host Peer ID:</label>
-          <input
-            id="hostPeerIdInput"
-            type="text"
-            placeholder="Host peer ID (from host screen)"
-            style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.9em; font-family: monospace;"
-          />
-          <p style="color: #9ca3af; font-size: 0.85em; margin-top: 5px;">
-            👉 Ask your host to share both the game code AND the peer ID
-          </p>
         </div>
 
         <button onclick="playerJoinGame()" style="width: 100%; padding: 12px; margin-bottom: 10px;">
