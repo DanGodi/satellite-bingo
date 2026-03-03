@@ -55,10 +55,7 @@ class PeerManager {
       try {
         this.peer = new Peer(peerId, {
           debug: 1, // Set to 1 for basic logging
-          host: 'peerjs-server.herokuapp.com',
-          secure: true,
-          port: 443,
-          path: '/',
+          // Use PeerJS cloud default server
           config: {
             iceServers: [
               { urls: 'stun:stun.l.google.com:19302' },

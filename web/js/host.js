@@ -63,10 +63,6 @@ async function initGame() {
 
         peerManager.peer = new Peer(hostGameInfo.peerId, {
           debug: 1,
-          host: 'peerjs-server.herokuapp.com',
-          secure: true,
-          port: 443,
-          path: '/',
           config: {
             iceServers: [
               { urls: 'stun:stun.l.google.com:19302' },
