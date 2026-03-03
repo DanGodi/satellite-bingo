@@ -153,16 +153,18 @@ async function startGeneration() {
     // Also update game.js to use these cards
     window.generatedCards = cards;
 
-    // Initialize peer-to-peer connection and create host game
-    try {
-      peerManager = new PeerManager();
-      gameInfo = await peerManager.createHostGame();
-      document.getElementById('gameCodeDisplay').textContent = gameInfo.gameCode;
-      logProgress('✓ Game code generated: ' + gameInfo.gameCode);
-    } catch (error) {
-      console.error('Failed to create host game:', error);
-      document.getElementById('gameCodeDisplay').textContent = 'ERROR';
+    // Generate game code and peer ID locally (no network call yet)
+    // Host.html will make the actual PeerJS connection
+    const helper = new PeerManager();
+    const gameCode = helper.generateGameCode();
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let peerId = '';
+    for (let i = 0; i < 20; i++) {
+      peerId += chars.charAt(Math.floor(Math.random() * chars.length));
     }
+    gameInfo = { gameCode, peerId };
+    document.getElementById('gameCodeDisplay').textContent = gameCode;
+    logProgress('✓ Game code generated: ' + gameCode);
 
   } catch (error) {
     logProgress(`✗ Error: ${error.message}`);
