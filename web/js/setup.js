@@ -155,12 +155,13 @@ async function startGeneration() {
 
     // Generate game code and peer ID locally (no network call yet)
     // Host.html will make the actual PeerJS connection
+    // Generate a short game code for display/identification only.
+    // The actual peer ID is assigned by PeerJS when host.html loads.
     const helper = new PeerManager();
     const gameCode = helper.generateGameCode();
-    // Peer ID = game code: players only need to enter one thing to join
-    gameInfo = { gameCode, peerId: gameCode };
+    gameInfo = { gameCode };
     document.getElementById('gameCodeDisplay').textContent = gameCode;
-    logProgress('✓ Game code generated: ' + gameCode);
+    logProgress('✓ Game session created: ' + gameCode);
 
   } catch (error) {
     logProgress(`✗ Error: ${error.message}`);

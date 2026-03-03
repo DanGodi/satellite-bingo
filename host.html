@@ -15,11 +15,14 @@
 
     <div class="game-view">
       <!-- Share Game Info Section -->
-      <div id="shareInfoSection" style="display: none; background: #e0f2fe; border: 2px solid #0284c7; border-radius: 8px; padding: 20px; margin-bottom: 20px; text-align: center;">
-        <h3 style="margin-top: 0; color: #0c4a6e;">📍 Share This Code With Players</h3>
-        <div style="background: white; padding: 16px; border-radius: 6px; border: 1px solid #0284c7; font-size: 2em; font-weight: bold; font-family: monospace; color: #0284c7; letter-spacing: 4px; margin-bottom: 12px;" id="gameCodeDisplay">LOADING...</div>
-        <p style="margin: 0; color: #0c4a6e; font-size: 0.9em;">
-          👉 Players enter this on <strong>player.html</strong> to join.
+      <div id="shareInfoSection" style="display: none; background: #e0f2fe; border: 2px solid #0284c7; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+        <h3 style="margin-top: 0; color: #0c4a6e; text-align: center;">📍 Share This With Players</h3>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <div style="background: white; padding: 12px 16px; border-radius: 6px; border: 1px solid #0284c7; font-size: 0.95em; font-family: monospace; color: #0284c7; flex: 1; word-break: break-all;" id="hostIdDisplay">Connecting...</div>
+          <button onclick="copyHostId()" id="copyBtn" style="padding: 12px 16px; font-size: 0.9em; white-space: nowrap; flex-shrink: 0;">📋 Copy</button>
+        </div>
+        <p style="margin: 0; color: #0c4a6e; font-size: 0.9em; text-align: center;">
+          👉 Players paste this on <strong>player.html</strong> to join.
           &nbsp;&nbsp;<strong>Connected: <span id="connectedPlayersCount">0</span></strong>
         </p>
       </div>

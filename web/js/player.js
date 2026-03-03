@@ -23,23 +23,21 @@ const STORAGE_KEY_PREFIX = 'bingo_player_';
  * Player joins a game using game code and host peer ID.
  */
 async function playerJoinGame() {
-  const gameCode = document.getElementById('gameCodeInput').value.trim().toUpperCase();
+  const hostId = document.getElementById('hostIdInput').value.trim();
 
-  if (!gameCode) {
-    alert('Please enter the game code');
+  if (!hostId) {
+    alert('Please paste the Host ID from the host screen');
     return;
   }
 
   // Show connecting status
   document.getElementById('joinSection').style.display = 'none';
   document.getElementById('connectingSection').style.display = 'block';
-  document.getElementById('connectionStatus').textContent = 'Initializing peer connection...';
+  document.getElementById('connectionStatus').textContent = 'Connecting to host...';
 
   try {
-    // Initialize peer manager — peer ID equals the game code
-    document.getElementById('connectionStatus').textContent = 'Connecting to host...';
     peerManager = new PeerManager();
-    await peerManager.joinGame(gameCode, gameCode);
+    await peerManager.joinGame(null, hostId);
 
     document.getElementById('connectionStatus').textContent = 'Connected! Loading cards from host...';
 
@@ -48,11 +46,8 @@ async function playerJoinGame() {
       handleHostMessage(data);
     });
 
-    // Request cards from host
-    peerManager.broadcastMessage({
-      type: 'player-ready',
-      gameCode: gameCode
-    });
+    // Notify host that player is ready
+    peerManager.broadcastMessage({ type: 'player-ready' });
 
     isConnectedToHost = true;
     console.log('Connected to host, awaiting cards...');
@@ -134,16 +129,16 @@ function handleHostMessage(data) {
  * Initialize on page load.
  */
 async function initPlayer() {
-  // Auto-join if game code is in URL params (e.g. player.html?gameCode=ABC12)
+  // Auto-join if host ID is in URL params (e.g. player.html?hostId=xxx)
   const urlParams = new URLSearchParams(window.location.search);
-  const gameCode = urlParams.get('gameCode');
+  const hostId = urlParams.get('hostId');
 
-  if (gameCode) {
-    document.getElementById('gameCodeInput').value = gameCode;
+  if (hostId) {
+    document.getElementById('hostIdInput').value = hostId;
     playerJoinGame();
   }
 
-  console.log('Player view ready. Waiting for game code input or URL parameters.');
+  console.log('Player view ready. Waiting for host ID input or URL parameters.');
 }
 
 /**

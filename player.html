@@ -18,18 +18,20 @@
       <div id="joinSection" class="card" style="max-width: 600px; margin: 0 auto 20px;">
         <h2>Join a Game</h2>
         <p style="color: #6b7280; margin-bottom: 20px;">
-          Enter the game code your host shared with you.
+          Paste the Host ID from the host's screen.
         </p>
 
         <div style="margin-bottom: 20px;">
-          <label for="gameCodeInput" style="display: block; margin-bottom: 5px; font-weight: 600;">Game Code:</label>
+          <label for="hostIdInput" style="display: block; margin-bottom: 5px; font-weight: 600;">Host ID:</label>
           <input
-            id="gameCodeInput"
+            id="hostIdInput"
             type="text"
-            placeholder="e.g., ABC12"
-            style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 1.2em; font-family: monospace; text-align: center; letter-spacing: 2px;"
-            maxlength="10"
+            placeholder="Paste host ID here"
+            style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.95em; font-family: monospace;"
           />
+          <p style="color: #9ca3af; font-size: 0.85em; margin-top: 5px;">
+            👉 Click the "📋 Copy" button on the host screen, then paste here
+          </p>
         </div>
 
         <button onclick="playerJoinGame()" style="width: 100%; padding: 12px; margin-bottom: 10px;">

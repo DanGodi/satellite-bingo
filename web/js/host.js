@@ -61,7 +61,9 @@ async function initGame() {
         // Game code already created in setup.js, just set it
         peerManager.gameCode = hostGameInfo.gameCode;
 
-        peerManager.peer = new Peer(hostGameInfo.peerId, {
+        // No custom ID — let PeerJS assign one. This is the only reliable approach
+        // with the PeerJS public server (custom IDs can fail with peer-unavailable).
+        peerManager.peer = new Peer({
           debug: 1,
           config: {
             iceServers: [
@@ -87,9 +89,9 @@ async function initGame() {
           console.error('Host P2P error:', err.type, err.message);
         });
 
-        peerManager.peer.on('open', () => {
-          console.log('✓ Host peer ready. Displaying share info...');
-          document.getElementById('gameCodeDisplay').textContent = hostGameInfo.gameCode;
+        peerManager.peer.on('open', (id) => {
+          console.log('✓ Host peer ready. Actual peer ID:', id);
+          document.getElementById('hostIdDisplay').textContent = id;
           document.getElementById('shareInfoSection').style.display = 'block';
         });
 
@@ -163,6 +165,18 @@ function handlePlayerMessage(data, playerId) {
   } else if (data.type === 'cards-received') {
     console.log('Player received cards:', playerId, 'cards:', data.cardCount);
   }
+}
+
+/**
+ * Copy the host peer ID to clipboard.
+ */
+function copyHostId() {
+  const id = document.getElementById('hostIdDisplay').textContent;
+  navigator.clipboard.writeText(id).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+  });
 }
 
 /**
