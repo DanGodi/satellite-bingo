@@ -9,14 +9,11 @@
   --primary: #2563eb;
   --primary-light: #3b82f6;
   --primary-dark: #1e40af;
+  --accent-orange: #f97316;
+  --accent-orange-light: #fed7aa;
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
-
-  --accent-purple: #a855f7;
-  --accent-pink: #ec4899;
-  --accent-cyan: #06b6d4;
-  --accent-lime: #84cc16;
 
   --text-primary: #1a1a1a;
   --text-secondary: #6b7280;
@@ -27,8 +24,7 @@
   --bg-subtle: #f3f1ed;
 
   --bg-blue-light: #eff6ff;
-  --bg-purple-light: #faf5ff;
-  --bg-pink-light: #fdf2f8;
+  --bg-orange-light: #ffedd5;
   --bg-cyan-light: #ecf8fb;
 
   --border: #e5e0d5;
@@ -513,7 +509,7 @@ a button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, var(--bg-blue-light) 0%, var(--bg-purple-light) 100%);
+  background: linear-gradient(135deg, var(--bg-blue-light) 0%, var(--bg-orange-light) 100%);
   padding: 24px 28px;
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
@@ -631,7 +627,7 @@ a button {
 /* ======== Progress Section ======== */
 
 .progress-section {
-  background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-purple-light) 100%);
+  background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-orange-light) 100%);
   padding: 24px;
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
@@ -709,7 +705,7 @@ a button {
 /* ======== Bingo Card Grid ======== */
 
 .bingo-card {
-  background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-pink-light) 100%);
+  background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-orange-light) 100%);
   border: 3px solid var(--primary);
   border-radius: var(--radius);
   padding: 20px;
@@ -721,8 +717,8 @@ a button {
 .bingo-card:hover {
   box-shadow: var(--shadow-lg);
   transform: translateY(-8px);
-  border-color: var(--accent-pink);
-  background: linear-gradient(135deg, #ffffff 0%, var(--bg-pink-light) 100%);
+  border-color: var(--accent-orange);
+  background: linear-gradient(135deg, #ffffff 0%, var(--bg-orange-light) 100%);
 }
 
 .bingo-card.completed {
