@@ -1,9 +1,9 @@
 /**
- * Segmentation Bingo - Claude-inspired Design
- * Clean, minimal, with warm neutrals and smooth animations
+ * Segmentation Bingo - Floaty & Bubbly Design
+ * Playful, rounded aesthetics with gentle floating animations
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap');
 
 :root {
   --primary: #2563eb;
@@ -28,10 +28,11 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
 
-  --radius: 10px;
-  --radius-sm: 6px;
+  --radius-lg: 28px;
+  --radius: 20px;
+  --radius-sm: 14px;
 
-  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 * {
@@ -45,11 +46,85 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Sora', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg-page);
   color: var(--text-primary);
   line-height: 1.6;
   font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* ======== Animations ======== */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 /* ======== Layout ======== */
@@ -66,67 +141,78 @@ header {
   text-align: center;
   margin-bottom: 40px;
   color: var(--text-primary);
+  animation: fadeInUp 0.6s var(--transition);
 }
 
 header h1 {
-  font-size: 3em;
+  font-size: 3.5em;
   font-weight: 700;
   margin-bottom: 12px;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: float 4s ease-in-out infinite;
 }
 
 header p {
-  font-size: 1.1em;
+  font-size: 1.15em;
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: 600;
+  animation: slideIn 0.6s var(--transition) 0.1s both;
 }
 
 /* ======== Cards ======== */
 
 .card {
   background: var(--bg-surface);
-  border-radius: var(--radius);
-  padding: 30px;
+  border-radius: var(--radius-lg);
+  padding: 40px;
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-light);
+  border: 2px solid var(--border-light);
   margin-bottom: 24px;
   transition: var(--transition);
+  animation: fadeInUp 0.6s var(--transition) 0.2s both;
 }
 
 .card:hover {
   box-shadow: var(--shadow-lg);
+  transform: translateY(-8px);
+  border-color: var(--primary-light);
 }
 
 /* ======== Buttons ======== */
 
 button, .button {
-  background: #1a1a1a;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: var(--radius-sm);
+  padding: 14px 32px;
+  border-radius: var(--radius);
   font-size: 1em;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: var(--transition);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Sora', sans-serif;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   white-space: nowrap;
+  letter-spacing: 0.3px;
 }
 
 button:hover:not(:disabled),
 .button:hover {
-  background: #2d2d2d;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3);
+  animation: bounce 0.4s ease-in-out;
 }
 
 button:active:not(:disabled),
 .button:active {
-  transform: translateY(0);
+  transform: translateY(-2px);
 }
 
 button:disabled {
@@ -135,50 +221,63 @@ button:disabled {
 }
 
 button.primary-blue {
-  background: var(--primary);
-}
-
-button.primary-blue:hover:not(:disabled) {
-  background: var(--primary-dark);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 }
 
 button.secondary {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.8);
   color: var(--text-primary);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
+  font-weight: 600;
 }
 
 button.secondary:hover {
-  background: var(--bg-subtle);
-  border-color: var(--text-secondary);
+  background: var(--bg-surface);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 button.success {
-  background: var(--success);
+  background: linear-gradient(135deg, var(--success), #059669);
 }
 
 button.success:hover:not(:disabled) {
-  background: #059669;
+  box-shadow: 0 12px 24px rgba(16, 185, 129, 0.3);
 }
 
 button.danger {
-  background: var(--danger);
+  background: linear-gradient(135deg, var(--danger), #b91c1c);
 }
 
 button.danger:hover:not(:disabled) {
-  background: #dc2626;
+  box-shadow: 0 12px 24px rgba(239, 68, 68, 0.3);
 }
 
 a {
   color: var(--primary);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
   transition: var(--transition);
+  position: relative;
+}
+
+a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: width 0.3s ease;
 }
 
 a:hover {
   color: var(--primary-dark);
-  text-decoration: underline;
+}
+
+a:hover::after {
+  width: 100%;
 }
 
 /* ======== Landing Page ======== */
@@ -198,11 +297,12 @@ a:hover {
 }
 
 .landing h2 {
-  font-size: 2em;
+  font-size: 2.2em;
   font-weight: 700;
   margin-bottom: 24px;
   color: var(--text-primary);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  animation: slideIn 0.5s var(--transition) 0.1s both;
 }
 
 .landing p {
@@ -210,6 +310,8 @@ a:hover {
   color: var(--text-secondary);
   line-height: 1.8;
   margin-bottom: 24px;
+  font-weight: 500;
+  animation: slideIn 0.5s var(--transition) 0.15s both;
 }
 
 .landing-buttons {
@@ -217,6 +319,7 @@ a:hover {
   gap: 16px;
   flex-wrap: wrap;
   width: 100%;
+  animation: slideIn 0.5s var(--transition) 0.2s both;
 }
 
 .landing-buttons button,
@@ -236,14 +339,17 @@ a button {
   color: var(--primary) !important;
   border: none !important;
   padding: 0 !important;
-  font-weight: 600;
+  font-weight: 700 !important;
   cursor: pointer;
   text-decoration: none;
   margin-top: 24px;
+  font-size: 1.05em !important;
+  animation: slideIn 0.5s var(--transition) 0.25s both;
 }
 
 .how-it-works-btn:hover {
   color: var(--primary-dark) !important;
+  transform: translateX(4px);
 }
 
 /* ======== Side Panel (Rules Drawer) ======== */
@@ -256,6 +362,7 @@ a button {
   pointer-events: none;
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 999;
+  backdrop-filter: blur(2px);
 }
 
 .side-panel-overlay.open {
@@ -267,90 +374,121 @@ a button {
   position: fixed;
   top: 0;
   right: 0;
-  width: min(480px, 100%);
+  width: min(500px, 100%);
   height: 100%;
   background: var(--bg-surface);
-  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.12);
+  box-shadow: -8px 0 60px rgba(0, 0, 0, 0.15);
   transform: translateX(100%);
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   overflow-y: auto;
   z-index: 1000;
-  padding: 32px 24px;
+  padding: 32px 28px;
+  border-radius: var(--radius) 0 0 var(--radius);
 }
 
 .side-panel.open {
   transform: translateX(0);
+  animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .side-panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 28px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--border-light);
 }
 
 .side-panel h2 {
-  font-size: 1.5em;
+  font-size: 1.6em;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
+  animation: slideIn 0.4s var(--transition);
 }
 
 .side-panel-close {
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  font-size: 1.5em;
+  font-size: 1.8em;
   cursor: pointer;
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: var(--transition);
+  border-radius: var(--radius-sm);
 }
 
 .side-panel-close:hover {
   color: var(--text-primary);
+  background: var(--bg-subtle);
+  transform: rotate(90deg);
 }
 
 .side-panel-section {
-  margin-bottom: 32px;
+  margin-bottom: 36px;
+  animation: fadeInUp 0.5s var(--transition);
 }
 
 .side-panel-section h3 {
-  font-size: 1.15em;
+  font-size: 1.25em;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .side-panel-section p {
   color: var(--text-secondary);
-  line-height: 1.8;
-  margin-bottom: 12px;
+  line-height: 1.9;
+  margin-bottom: 14px;
   font-size: 0.95em;
+  font-weight: 500;
 }
 
 .side-panel-section ol {
-  margin-left: 20px;
-  line-height: 1.9;
+  margin-left: 24px;
+  line-height: 2;
   color: var(--text-secondary);
   font-size: 0.95em;
+  font-weight: 500;
 }
 
 .side-panel-section ol li {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.side-panel-section ul {
+  margin-left: 24px;
+  line-height: 2;
+  color: var(--text-secondary);
+  font-size: 0.95em;
+  font-weight: 500;
+}
+
+.side-panel-section ul li {
+  margin-bottom: 8px;
 }
 
 .side-panel-image {
   width: 100%;
   border-radius: var(--radius);
-  margin: 16px 0;
-  border: 1px solid var(--border-light);
+  margin: 20px 0;
+  border: 2px solid var(--border-light);
+  transition: var(--transition);
+  animation: fadeInUp 0.5s var(--transition) 0.1s both;
+}
+
+.side-panel-image:hover {
+  transform: scale(1.03) translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
 
 /* ======== Game Views ======== */
@@ -358,36 +496,40 @@ a button {
 .game-view {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .game-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-surface);
-  padding: 20px 24px;
+  background: linear-gradient(135deg, var(--bg-surface), var(--bg-subtle));
+  padding: 24px 28px;
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-light);
+  border: 2px solid var(--border-light);
   flex-wrap: wrap;
   gap: 16px;
+  animation: fadeInUp 0.6s var(--transition) 0.1s both;
 }
 
 .game-header h1 {
-  font-size: 1.5em;
+  font-size: 1.6em;
   color: var(--text-primary);
   font-weight: 700;
   margin: 0;
+  animation: float 3s ease-in-out infinite;
 }
 
 .turn-counter {
-  font-size: 1em;
-  color: var(--text-secondary);
-  font-weight: 600;
-  background: var(--bg-subtle);
-  padding: 8px 16px;
+  font-size: 1.05em;
+  color: var(--text-primary);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 10px 20px;
   border-radius: var(--radius-sm);
+  animation: float 4s ease-in-out infinite;
 }
 
 /* ======== Image Display ======== */
@@ -395,10 +537,17 @@ a button {
 .image-display {
   background: var(--bg-surface);
   border-radius: var(--radius);
-  padding: 20px;
+  padding: 24px;
   text-align: center;
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-light);
+  border: 2px solid var(--border-light);
+  transition: var(--transition);
+  animation: fadeInUp 0.6s var(--transition) 0.15s both;
+}
+
+.image-display:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-6px);
 }
 
 .image-display img {
@@ -406,57 +555,61 @@ a button {
   max-height: 600px;
   border-radius: var(--radius);
   transition: var(--transition);
+  animation: fadeInUp 0.6s var(--transition) 0.2s both;
+}
+
+.image-display img:hover {
+  transform: scale(1.02);
 }
 
 .image-id {
   font-size: 0.9em;
   color: var(--text-secondary);
-  margin-top: 12px;
-  font-weight: 500;
+  margin-top: 14px;
+  font-weight: 600;
   font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
 }
 
 /* ======== Events Panel ======== */
 
 .events-panel {
-  background: #f0fdf4;
-  border: 1px solid #d1fae5;
-  border-left: 4px solid var(--success);
-  padding: 20px;
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+  border: 2px solid #d1fae5;
+  border-left: 6px solid var(--success);
+  padding: 24px;
   border-radius: var(--radius);
+  animation: fadeInUp 0.6s var(--transition) 0.2s both;
 }
 
 .events-panel h3 {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   color: #047857;
   font-weight: 700;
+  font-size: 1.15em;
 }
 
 .events-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .event-chip {
-  background: var(--success);
+  background: linear-gradient(135deg, var(--success), #34d399);
   color: white;
-  padding: 7px 14px;
-  border-radius: 16px;
-  font-size: 0.85em;
-  font-weight: 600;
-  animation: slideIn 0.3s ease-out;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: 700;
+  animation: slideIn 0.4s var(--transition);
+  transition: var(--transition);
+  letter-spacing: 0.3px;
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.event-chip:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
 }
 
 .event-chip.inactive {
@@ -468,61 +621,67 @@ a button {
 
 .progress-section {
   background: var(--bg-surface);
-  padding: 20px;
+  padding: 24px;
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-light);
+  border: 2px solid var(--border-light);
+  animation: fadeInUp 0.6s var(--transition) 0.2s both;
 }
 
 .progress-section h3 {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   color: var(--text-primary);
   font-weight: 700;
+  font-size: 1.2em;
 }
 
 .card-progress {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 12px;
+  gap: 16px;
 }
 
 .card-progress-item {
-  background: var(--bg-subtle);
-  padding: 14px;
+  background: linear-gradient(135deg, var(--bg-subtle), var(--bg-page));
+  padding: 16px;
   border-radius: var(--radius-sm);
-  border-left: 3px solid var(--primary);
+  border-left: 4px solid var(--primary);
   transition: var(--transition);
+  animation: fadeInUp 0.6s var(--transition);
 }
 
 .card-progress-item:hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  transform: translateY(-6px);
+  border-left-color: var(--primary-light);
 }
 
 .card-progress-item.bingo {
   border-left-color: var(--success);
-  background: #f0fdf4;
-  border: 1px solid #d1fae5;
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+  border: 2px solid #d1fae5;
 }
 
 .card-id {
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-size: 0.95em;
 }
 
 .progress-bar {
   background: var(--border);
-  height: 6px;
-  border-radius: 3px;
+  height: 8px;
+  border-radius: 10px;
   overflow: hidden;
+  margin: 8px 0;
 }
 
 .progress-fill {
   background: linear-gradient(90deg, var(--primary), var(--primary-light));
   height: 100%;
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 10px;
 }
 
 .card-progress-item.bingo .progress-fill {
@@ -532,7 +691,7 @@ a button {
 .progress-text {
   font-size: 0.8em;
   color: var(--text-secondary);
-  margin-top: 6px;
+  margin-top: 8px;
   font-weight: 600;
 }
 
@@ -540,85 +699,87 @@ a button {
 
 .bingo-card {
   background: var(--bg-surface);
-  border: 2px solid var(--primary);
+  border: 3px solid var(--primary);
   border-radius: var(--radius);
-  padding: 16px;
+  padding: 20px;
   box-shadow: var(--shadow-md);
   transition: var(--transition);
+  animation: fadeInUp 0.6s var(--transition) 0.1s both;
+}
+
+.bingo-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-8px);
+  border-color: var(--primary-light);
 }
 
 .bingo-card.completed {
   border-color: var(--success);
-  background: #f0fdf4;
-  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.15);
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+  box-shadow: 0 12px 30px rgba(16, 185, 129, 0.2);
+  animation: pulse 0.6s ease-out;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--border-light);
 }
 
 .card-header h3 {
   color: var(--text-primary);
   font-weight: 700;
-  font-size: 1.1em;
+  font-size: 1.15em;
   margin: 0;
 }
 
 .bingo-label {
   background: linear-gradient(135deg, var(--success), #34d399);
   color: white;
-  padding: 5px 12px;
-  border-radius: 14px;
+  padding: 6px 14px;
+  border-radius: 20px;
   font-size: 0.75em;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   animation: pulse 0.5s ease-out;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(0.95);
-  }
-  100% {
-    transform: scale(1);
-  }
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .card-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
+  gap: 10px;
 }
 
 .bingo-square {
   aspect-ratio: 1;
-  background: var(--bg-subtle);
+  background: linear-gradient(135deg, var(--bg-subtle), var(--bg-page));
   border: 2px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 8px;
+  padding: 10px;
   cursor: pointer;
   transition: var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 0.75em;
+  font-size: 0.8em;
   font-weight: 600;
   overflow: hidden;
   position: relative;
+  animation: fadeInUp 0.4s var(--transition);
 }
 
 .bingo-square:hover:not(.marked) {
   border-color: var(--primary);
-  background: #f0f9ff;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  transform: translateY(-6px) scale(1.05);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius);
 }
 
 .bingo-square.marked {
@@ -626,36 +787,42 @@ a button {
   color: white;
   border-color: var(--success);
   font-weight: 700;
+  animation: pulse 0.4s ease-out;
+  box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius);
 }
 
 .bingo-square.marked::after {
   content: '✓';
-  font-size: 1.3em;
+  font-size: 1.4em;
   font-weight: 900;
 }
 
 /* ======== Input Fields ======== */
 
 input, select {
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 10px 12px;
+  padding: 12px 16px;
   font-size: 1em;
   transition: var(--transition);
   background: var(--bg-surface);
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Sora', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 input:focus, select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+  transform: translateY(-2px);
 }
 
 .card-selector label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-weight: 700;
   color: var(--text-primary);
   font-size: 0.95em;
@@ -665,28 +832,38 @@ input:focus, select:focus {
 
 .empty-state {
   text-align: center;
-  padding: 40px 20px;
-  background: var(--bg-subtle);
+  padding: 48px 24px;
+  background: linear-gradient(135deg, var(--bg-subtle), var(--bg-page));
   border-radius: var(--radius);
   color: var(--text-secondary);
-  border: 1px solid var(--border-light);
+  border: 2px solid var(--border-light);
+  animation: fadeInUp 0.6s var(--transition);
 }
 
 .empty-state h3 {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   color: var(--text-primary);
   font-weight: 700;
+  font-size: 1.15em;
 }
 
 /* ======== Responsive ======== */
 
 @media (max-width: 768px) {
   header h1 {
-    font-size: 1.8em;
+    font-size: 2.2em;
+  }
+
+  header p {
+    font-size: 1em;
   }
 
   .container {
     padding: 16px;
+  }
+
+  .card {
+    padding: 24px;
   }
 
   .game-header {
@@ -705,12 +882,12 @@ input:focus, select:focus {
 
   .card-grid {
     grid-template-columns: repeat(5, 1fr);
-    gap: 6px;
+    gap: 8px;
   }
 
   .bingo-square {
-    font-size: 0.6em;
-    padding: 4px;
+    font-size: 0.65em;
+    padding: 6px;
   }
 
   .card-progress {
@@ -719,5 +896,13 @@ input:focus, select:focus {
 
   .side-panel {
     width: 100%;
+  }
+
+  button, .button {
+    padding: 12px 24px;
+  }
+
+  .landing h2 {
+    font-size: 1.6em;
   }
 }
