@@ -25,6 +25,19 @@ const playerProgressHistory = new Map(); // peerId → number[] (squares marked 
 let verifiedWinnerCount = 0;
 let verifiedWinners = []; // [{peerId, name, turn}]
 let gameStarted = false;
+let shortGameCode = null; // 6-character code for easy sharing
+
+/**
+ * Generate a random 6-character code (A-Z, 0-9)
+ */
+function generateGameCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
 
 /**
  * Initialize the game on page load.
@@ -41,14 +54,46 @@ async function initGame() {
     // Initialize PeerJS immediately
     try {
       console.log('Initializing PeerJS...');
+
+      // Generate short game code first
+      shortGameCode = generateGameCode();
+      console.log('Generated game code:', shortGameCode);
+
+      // Initialize peer with bingo-{CODE} format
       peerManager = new PeerManager();
-      await peerManager.initializePeer();
+
+      // Create peer with custom ID
+      if (!peerManager.peer) {
+        const customPeerId = `bingo-${shortGameCode}`;
+        peerManager.peer = new Peer(customPeerId, {
+          debug: 1,
+          config: {
+            iceServers: [
+              { urls: 'stun:stun.l.google.com:19302' },
+              { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+          }
+        });
+      }
+
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error('PeerJS initialization timeout')), 10000);
+        peerManager.peer.on('open', () => {
+          clearTimeout(timeout);
+          resolve();
+        });
+        peerManager.peer.on('error', (err) => {
+          clearTimeout(timeout);
+          reject(err);
+        });
+      });
 
       myPeerId = peerManager.peer.id;
       console.log('✓ PeerJS initialized with ID:', myPeerId);
 
-      // Display game code
-      document.getElementById('gameCodeDisplay').textContent = myPeerId;
+      // Display short game code
+      document.getElementById('gameCodeDisplay').textContent = shortGameCode;
+      console.log('Host peer ID:', myPeerId, '| Display code:', shortGameCode);
 
       // Set up incoming connections
       peerManager.peer.on('connection', (conn) => {

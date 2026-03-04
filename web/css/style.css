@@ -13,16 +13,26 @@
   --warning: #f59e0b;
   --danger: #ef4444;
 
+  --accent-purple: #a855f7;
+  --accent-pink: #ec4899;
+  --accent-cyan: #06b6d4;
+  --accent-lime: #84cc16;
+
   --text-primary: #1a1a1a;
   --text-secondary: #6b7280;
   --text-muted: #9ca3af;
 
-  --bg-page: #f7f7f5;
+  --bg-page: #faf8f3;
   --bg-surface: #ffffff;
-  --bg-subtle: #f3f3f0;
+  --bg-subtle: #f3f1ed;
 
-  --border: #e5e5e0;
-  --border-light: #f0f0ed;
+  --bg-blue-light: #eff6ff;
+  --bg-purple-light: #faf5ff;
+  --bg-pink-light: #fdf2f8;
+  --bg-cyan-light: #ecf8fb;
+
+  --border: #e5e0d5;
+  --border-light: #f0ede8;
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -75,12 +85,12 @@ body {
   }
 }
 
-@keyframes bounce {
-  0%, 100% {
+@keyframes smoothRaise {
+  from {
     transform: translateY(0);
   }
-  50% {
-    transform: translateY(-6px);
+  to {
+    transform: translateY(-8px);
   }
 }
 
@@ -166,7 +176,7 @@ header p {
 /* ======== Cards ======== */
 
 .card {
-  background: var(--bg-surface);
+  background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-blue-light) 100%);
   border-radius: var(--radius-lg);
   padding: 40px;
   box-shadow: var(--shadow-md);
@@ -179,13 +189,14 @@ header p {
 .card:hover {
   box-shadow: var(--shadow-lg);
   transform: translateY(-8px);
-  border-color: var(--primary-light);
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #ffffff 0%, var(--bg-blue-light) 100%);
 }
 
 /* ======== Buttons ======== */
 
 button, .button {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   color: white;
   border: none;
   padding: 14px 32px;
@@ -205,9 +216,8 @@ button, .button {
 
 button:hover:not(:disabled),
 .button:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3);
-  animation: bounce 0.4s ease-in-out;
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.4);
 }
 
 button:active:not(:disabled),
@@ -503,11 +513,11 @@ a button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, var(--bg-surface), var(--bg-subtle));
+  background: linear-gradient(135deg, var(--bg-blue-light) 0%, var(--bg-purple-light) 100%);
   padding: 24px 28px;
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--primary-light);
   flex-wrap: wrap;
   gap: 16px;
   animation: fadeInUp 0.6s var(--transition) 0.1s both;
@@ -535,7 +545,7 @@ a button {
 /* ======== Image Display ======== */
 
 .image-display {
-  background: var(--bg-surface);
+  background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-cyan-light) 100%);
   border-radius: var(--radius);
   padding: 24px;
   text-align: center;
@@ -548,6 +558,7 @@ a button {
 .image-display:hover {
   box-shadow: var(--shadow-lg);
   transform: translateY(-6px);
+  background: linear-gradient(135deg, #ffffff 0%, var(--bg-cyan-light) 100%);
 }
 
 .image-display img {
@@ -620,7 +631,7 @@ a button {
 /* ======== Progress Section ======== */
 
 .progress-section {
-  background: var(--bg-surface);
+  background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-purple-light) 100%);
   padding: 24px;
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
@@ -698,7 +709,7 @@ a button {
 /* ======== Bingo Card Grid ======== */
 
 .bingo-card {
-  background: var(--bg-surface);
+  background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-pink-light) 100%);
   border: 3px solid var(--primary);
   border-radius: var(--radius);
   padding: 20px;
@@ -710,7 +721,8 @@ a button {
 .bingo-card:hover {
   box-shadow: var(--shadow-lg);
   transform: translateY(-8px);
-  border-color: var(--primary-light);
+  border-color: var(--accent-pink);
+  background: linear-gradient(135deg, #ffffff 0%, var(--bg-pink-light) 100%);
 }
 
 .bingo-card.completed {
