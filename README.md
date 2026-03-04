@@ -4,6 +4,12 @@ Generate and play a custom Bingo game using custom imagery and AI-powered segmen
 
 This project allows you to turn a collection of images into a fully playable Bingo game. It uses the **Segment Anything Model (SAM)** to detect features (like pools, cars, boats) and generates statistically "fair" Bingo cards based on the frequency of these features.
 
+## 🚀 Play Online
+
+**Live Game:** https://dangod.github.io/segmentation-bingo/
+
+No installation needed! Open the link, host a game, and share the 6-character code with up to 4 players. Works on desktop, tablet, and mobile — plays seamlessly across different networks using WebRTC P2P.
+
 ## 🌟 Features
 
 *   **Interactive Labeling**: Easy-to-use widget to tag features in your images.
@@ -11,6 +17,19 @@ This project allows you to turn a collection of images into a fully playable Bin
 *   **Fair Card Generation**: Uses Monte Carlo simulations to ensure all Bingo cards have similar difficulty (expected turns to win).
 *   **Printable Assets**: Generates PDF/Image files for the Bingo cards.
 *   **Game Presentation**: Creates a slide deck (PDF) to "call" the game by revealing images one by one.
+*   **Live Web App**: Play instantly in the browser with real-time P2P multiplayer across networks.
+
+## 🌐 Web App
+
+The project includes a fully functional web app (no server required — hosted on GitHub Pages):
+
+- **Host View**: Display satellite images one by one, see live card progress for all players
+- **Player View**: Join with a 6-character code, mark your card as events fire, claim BINGO
+- **Real-time Sync**: WebRTC P2P connection streams game updates and card markings live
+- **End-Game Charts**: Line charts showing how quickly each player completed their cards
+- **Responsive Design**: Works on phones, tablets, and desktops with an intuitive UI
+
+All without needing to run any code locally — just open the live URL!
 
 ## 🛠️ Installation
 
