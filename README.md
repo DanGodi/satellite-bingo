@@ -6,7 +6,7 @@ This project allows you to turn a collection of images into a fully playable Bin
 
 ## 🚀 Play Online
 
-**Live Game:** https://dangod.github.io/segmentation-bingo/
+**Live Game:** https://DanGodi.github.io/segmentation-bingo/
 
 No installation needed! Open the link, host a game, and share the 6-character code with up to 4 players. Works on desktop, tablet, and mobile — plays seamlessly across different networks using WebRTC P2P.
 
