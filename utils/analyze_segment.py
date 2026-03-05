@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from PIL import Image, ImageDraw
 from rasterio.enums import Resampling
-from samgeo import SamGeo3
+from transformers import Sam3Model, Sam3Processor
 import numpy as np
 import pandas as pd
 import rasterio
@@ -84,6 +84,38 @@ def compute_stats_from_files(mask_path: Path, scores_path: Path):
     )
 
 
+def save_masks_to_tif(masks, scores, source_path, mask_out, scores_out):
+    """Write unique-ID mask and per-pixel score GeoTIFFs using rasterio."""
+    if len(masks) == 0:
+        raise ValueError("No masks to save")
+
+    H, W = masks[0].shape
+    mask_array = np.zeros((H, W), dtype=np.uint32)
+    score_array = np.zeros((H, W), dtype=np.float32)
+
+    for i, (mask, score) in enumerate(zip(masks, scores), start=1):
+        mask_bool = mask > 0
+        mask_array[mask_bool] = i
+        score_array[mask_bool] = float(score)
+
+    try:
+        with rasterio.open(str(source_path)) as src:
+            crs = src.crs
+            transform = src.transform
+    except Exception:
+        crs = None
+        transform = rasterio.transform.from_bounds(0, 0, W, H, W, H)
+
+    meta = dict(driver="GTiff", height=H, width=W, count=1,
+                compress="deflate", crs=crs, transform=transform)
+
+    with rasterio.open(str(mask_out), "w", dtype=np.uint8, **meta) as dst:
+        dst.write(mask_array.clip(0, 255).astype(np.uint8), 1)
+
+    with rasterio.open(str(scores_out), "w", dtype=np.float32, **meta) as dst:
+        dst.write(score_array, 1)
+
+
 def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True, overlay_alpha=0.45, hf_token=None):
     mapping_path = Path(mapping_path)
     if not mapping_path.exists():
@@ -102,7 +134,6 @@ def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True,
     masks_dir.mkdir(parents=True, exist_ok=True)
     overlays_dir.mkdir(parents=True, exist_ok=True)
 
-    # initialize SamGeo3
     # Check for CUDA (NVIDIA) or MPS (Apple Silicon)
     if device == "gpu":
         if torch.cuda.is_available():
@@ -116,8 +147,11 @@ def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True,
     else:
         device_idx = "cpu"
 
-    print("Initializing SamGeo3 device:", device_idx)
-    sam3 = SamGeo3(backend="transformers", device=device_idx, checkpoint_path=None, load_from_HF=True)
+    MODEL_ID = "facebook/sam3"
+    print("Loading Sam3Model from HuggingFace, device:", device_idx)
+    processor = Sam3Processor.from_pretrained(MODEL_ID)
+    model = Sam3Model.from_pretrained(MODEL_ID).to(device_idx)
+    model.eval()
 
     stats_rows = []
 
@@ -134,8 +168,7 @@ def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True,
             continue
         print(f"Processing image: {img_path}, features: {features}")
 
-        # IMPORTANT: set the image before processing any of its features
-        sam3.set_image(str(img_path))
+        pil_image = Image.open(str(img_path)).convert("RGB")
 
         fname_base = img_path.stem
 
@@ -171,10 +204,21 @@ def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True,
 
             print("  Generating masks for feature:", feat)
             try:
-                # generate masks for this prompt (will raise if no image set)
-                sam3.generate_masks(prompt=feat)
+                inputs = processor(images=pil_image, text=feat, return_tensors="pt").to(device_idx)
+                with torch.no_grad():
+                    outputs = model(**inputs)
+                H, W = pil_image.height, pil_image.width
+                results = processor.post_process_instance_segmentation(
+                    outputs,
+                    threshold=0.5,
+                    mask_threshold=0.5,
+                    target_sizes=[[H, W]],
+                )[0]
+                masks = [m.cpu().numpy() for m in results["masks"]]
+                scores = [float(s) for s in results["scores"]]
+                print(f"  Found {len(masks)} objects.")
             except Exception as e:
-                print("  Error during generate_masks:", e)
+                print("  Error during segmentation:", e)
                 stats_rows.append({
                     "image": str(img_path),
                     "feature": feat,
@@ -189,13 +233,11 @@ def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True,
                 })
                 continue
 
-            # Try to save masks & scores; save_masks raises ValueError if no masks were generated
             try:
-                sam3.save_masks(output=str(mask_out), save_scores=str(scores_out), unique=True)
+                save_masks_to_tif(masks, scores, img_path, mask_out, scores_out)
                 print("  Saved mask:", mask_out, "scores:", scores_out)
             except ValueError as e:
-                # no masks found for this prompt
-                print("  save_masks skipped:", e)
+                print("  save skipped:", e)
                 stats_rows.append({
                     "image": str(img_path),
                     "feature": feat,

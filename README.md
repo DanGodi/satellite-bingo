@@ -53,10 +53,9 @@ All without needing to run any code locally — just open the live URL!
 
 ## 🔑 Model Access (Important!)
 
-This project uses **SAM 3 (Segment Anything Model 3)** via the `samgeo` library. To use it, you must:
+This project uses **SAM 3 (Segment Anything Model 3)** directly via HuggingFace `transformers`. To use it, you must:
 
-1.  **Request Access**: Go to the [SAM 3 Hugging Face page](https://huggingface.co/facebook/sam3) (or the specific model used) and accept the license terms.
-    *   *Note: Ensure you have access to the model checkpoints required by `samgeo`.*
+1.  **Request Access**: Go to the [SAM 3 Hugging Face page](https://huggingface.co/facebook/sam3) and accept the license terms.
 2.  **Get a Token**: Create a [Hugging Face Access Token](https://huggingface.co/settings/tokens) (Read permissions are sufficient).
 3.  **Configure Notebook**: In `run_full_game.ipynb`, look for **Step 3**, uncomment the login cell, run it and insert you HF token in the required field.
 
