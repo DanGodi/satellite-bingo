@@ -1,31 +1,28 @@
 /**
- * Peer-to-Peer Connection Manager using PeerJS
+ * Peer-to-Peer Connection Manager using PeerJS.
  *
- * Handles WebRTC P2P connections between host and players.
- * Uses PeerJS for simplified WebRTC signaling.
+ * Wraps WebRTC signaling for host↔player communication.
+ * The host initializes a named peer; players connect to it by ID.
  *
  * Usage:
  *   const peer = new PeerManager();
- *
- *   // Host creates a game
- *   const gameCode = peer.createHostGame();
- *
- *   // Player joins with code
- *   peer.joinGame(gameCode, onStateUpdate);
+ *   await peer.joinGame(hostPeerId, hostPeerId);
  */
 
 class PeerManager {
   constructor() {
     this.peer = null;
     this.hostConnection = null;
-    this.playerConnections = new Map(); // peerId -> connection
+    this.playerConnections = new Map();
     this.gameCode = null;
     this.isHost = false;
     this.messageHandlers = [];
   }
 
   /**
-   * Generate a short, memorable game code (4-6 characters).
+   * Generates a short random alphanumeric code.
+   *
+   * @returns {string} A 5-character uppercase code.
    */
   generateGameCode() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -37,20 +34,18 @@ class PeerManager {
   }
 
   /**
-   * Initialize the PeerJS peer instance.
+   * Initializes the PeerJS peer instance with a unique ID.
+   *
+   * @returns {Promise<void>} Resolves when the peer is open and ready.
    */
   initializePeer() {
     return new Promise((resolve, reject) => {
       if (this.peer) {
-        console.log('Peer already initialized');
         resolve();
         return;
       }
 
-      // Generate a unique peer ID for this browser instance
       const peerId = `${this.generateGameCode()}-${Date.now()}`;
-
-      console.log('Initializing PeerJS with ID:', peerId);
 
       try {
         this.peer = new Peer(peerId, {
@@ -64,66 +59,40 @@ class PeerManager {
         });
 
         this.peer.on('error', (err) => {
-          console.error('PeerJS error:', err.type, err.message);
           reject(err);
         });
 
         this.peer.on('connection', (conn) => {
-          console.log('Incoming connection from:', conn.peer);
           this.handleIncomingConnection(conn);
         });
 
-        // Wait for peer to be ready
         this.peer.on('open', () => {
-          console.log('✓ Peer initialized successfully with ID:', peerId);
           resolve();
         });
 
-        // Timeout if peer doesn't initialize
         setTimeout(() => {
-          if (!this.peer?.id) {
+          if (!this.peer?.open) {
             reject(new Error('PeerJS initialization timeout - could not reach signaling server'));
           }
         }, 10000);
       } catch (error) {
-        console.error('Failed to create Peer instance:', error);
         reject(error);
       }
     });
   }
 
   /**
-   * Host creates a game and waits for players to join.
-   */
-  async createHostGame() {
-    await this.initializePeer();
-
-    this.isHost = true;
-    this.gameCode = this.generateGameCode();
-
-    console.log('Host game created with code:', this.gameCode);
-    console.log('Host peer ID:', this.peer.id);
-
-    return {
-      gameCode: this.gameCode,
-      peerId: this.peer.id
-    };
-  }
-
-  /**
-   * Player joins a game using the host's game code and peer ID.
-   * Note: In practice, we'll need to get the host's peer ID from the code somehow.
-   * For local testing, we can pass it directly. For production, use a signaling service.
+   * Connects a player to the host using the host's peer ID.
+   *
+   * @param {string} gameCode - The game code (same as hostPeerId in current design).
+   * @param {string} hostPeerId - The full PeerJS ID of the host peer.
+   * @returns {Promise<void>} Resolves when the connection is established.
    */
   async joinGame(gameCode, hostPeerId) {
     await this.initializePeer();
 
     this.gameCode = gameCode;
 
-    console.log('Player joining game:', gameCode);
-    console.log('Connecting to host peer ID:', hostPeerId);
-
-    // Create connection to host
     this.hostConnection = this.peer.connect(hostPeerId, {
       reliable: true,
       serialization: 'json'
@@ -135,7 +104,6 @@ class PeerManager {
         if (!settled) { settled = true; fn(val); }
       };
 
-      // peer-unavailable fires immediately when the host peer ID doesn't exist
       const onPeerError = (err) => {
         if (err.type === 'peer-unavailable') {
           settle(reject, new Error('Host not found. Make sure the host is on host.html and the Peer ID is correct.'));
@@ -145,12 +113,10 @@ class PeerManager {
 
       this.hostConnection.on('open', () => {
         this.peer.off('error', onPeerError);
-        console.log('Connected to host');
         settle(resolve, undefined);
       });
 
       this.hostConnection.on('error', (err) => {
-        console.error('Connection error:', err);
         settle(reject, err);
       });
 
@@ -158,7 +124,6 @@ class PeerManager {
         this.handleMessage(data);
       });
 
-      // Timeout after 15 seconds (NAT traversal can be slow)
       setTimeout(() => {
         settle(reject, new Error('Connection timeout - could not reach host'));
       }, 15000);
@@ -166,16 +131,13 @@ class PeerManager {
   }
 
   /**
-   * Host handles incoming player connections.
+   * Handles an incoming connection from a new player (host only).
+   *
+   * @param {DataConnection} conn - The incoming PeerJS connection.
    */
   handleIncomingConnection(conn) {
-    console.log('Player connecting:', conn.peer);
-
     conn.on('open', () => {
       this.playerConnections.set(conn.peer, conn);
-      console.log('Player connected:', conn.peer);
-
-      // Notify listeners of new player
       this.broadcastMessage({
         type: 'player-joined',
         playerId: conn.peer
@@ -188,45 +150,47 @@ class PeerManager {
 
     conn.on('close', () => {
       this.playerConnections.delete(conn.peer);
-      console.log('Player disconnected:', conn.peer);
     });
 
-    conn.on('error', (err) => {
-      console.error('Connection error with player:', err);
+    conn.on('error', () => {
       this.playerConnections.delete(conn.peer);
     });
   }
 
   /**
-   * Handle incoming messages from peers.
+   * Dispatches an incoming message to all registered handlers.
+   *
+   * @param {object} data - The message payload.
+   * @param {string|null} fromPeerId - Sender's peer ID, or null if from host.
    */
   handleMessage(data, fromPeerId = null) {
-    // Notify all registered handlers
     this.messageHandlers.forEach(handler => {
       handler(data, fromPeerId);
     });
   }
 
   /**
-   * Register a callback to handle incoming messages.
+   * Registers a callback to handle incoming messages.
+   *
+   * @param {function(object, string|null): void} callback - Message handler.
    */
   onMessage(callback) {
     this.messageHandlers.push(callback);
   }
 
   /**
-   * Send a message to all connected peers.
+   * Sends a message to all connected players (host) or to the host (player).
+   *
+   * @param {object} data - The message payload.
    */
   broadcastMessage(data) {
     if (this.isHost) {
-      // Host sends to all players
       this.playerConnections.forEach((conn) => {
         if (conn.open) {
           conn.send(data);
         }
       });
     } else {
-      // Player sends to host
       if (this.hostConnection && this.hostConnection.open) {
         this.hostConnection.send(data);
       }
@@ -234,7 +198,19 @@ class PeerManager {
   }
 
   /**
-   * Send a message to a specific player (host only).
+   * Sends a message to the host (player only). Alias for broadcastMessage.
+   *
+   * @param {object} data - The message payload.
+   */
+  sendToHost(data) {
+    this.broadcastMessage(data);
+  }
+
+  /**
+   * Sends a message to a specific connected player (host only).
+   *
+   * @param {string} peerId - The target player's peer ID.
+   * @param {object} data - The message payload.
    */
   sendToPlayer(peerId, data) {
     if (!this.isHost) {
@@ -244,19 +220,15 @@ class PeerManager {
     const conn = this.playerConnections.get(peerId);
     if (conn && conn.open) {
       conn.send(data);
-    } else {
-      console.warn(`Cannot send to player ${peerId}: connection not open`);
     }
   }
 
   /**
-   * Disconnect all connections.
+   * Closes all active connections.
    */
   disconnect() {
     if (this.isHost) {
-      this.playerConnections.forEach((conn) => {
-        conn.close();
-      });
+      this.playerConnections.forEach((conn) => conn.close());
       this.playerConnections.clear();
     } else {
       if (this.hostConnection) {
@@ -267,14 +239,18 @@ class PeerManager {
   }
 
   /**
-   * Get the current game code.
+   * Returns the current game code.
+   *
+   * @returns {string|null}
    */
   getGameCode() {
     return this.gameCode;
   }
 
   /**
-   * Get number of connected players (for host only).
+   * Returns the number of connected players (host only).
+   *
+   * @returns {number}
    */
   getConnectedPlayerCount() {
     return this.playerConnections.size;

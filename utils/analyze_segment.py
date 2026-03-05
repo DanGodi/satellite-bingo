@@ -13,19 +13,48 @@ import sys
 import os
 import random
 
+
 def safe_feature_name(name: str) -> str:
+    """Converts a feature name to a filesystem-safe string.
+
+    Args:
+        name: The raw feature name.
+
+    Returns:
+        The name with non-alphanumeric characters (except hyphens and underscores)
+        replaced by underscores, with leading/trailing underscores stripped.
+    """
     return "".join(c if c.isalnum() or c in ("-", "_") else "_" for c in name).strip("_")
 
+
 def open_image_pil(path):
+    """Opens an image file as an RGBA PIL Image.
+
+    Args:
+        path: Path to the image file.
+
+    Returns:
+        PIL.Image.Image: The loaded image in RGBA mode.
+    """
     return Image.open(path).convert("RGBA")
 
+
 def overlay_mask_on_image(img_pil: Image.Image, mask_arr: np.ndarray, color=(255, 0, 0), alpha=0.5):
-    # Ensure image size and mask size align
+    """Composites a coloured mask overlay onto a base image.
+
+    Args:
+        img_pil: Base image in RGBA mode.
+        mask_arr: 2-D numpy array where non-zero pixels indicate the mask.
+        color: RGB tuple for the overlay colour.
+        alpha: Opacity of the overlay in [0, 1].
+
+    Returns:
+        PIL.Image.Image: The composited RGBA image.
+    """
     H, W = mask_arr.shape
     if img_pil.width != W or img_pil.height != H:
         img_pil = img_pil.resize((W, H), Image.LANCZOS)
 
-    # Build RGBA overlay from mask numpy array
     color_with_alpha = (color[0], color[1], color[2], int(255 * alpha))
     rgba = np.zeros((H, W, 4), dtype=np.uint8)
     mask_bool = mask_arr > 0
@@ -38,7 +67,18 @@ def overlay_mask_on_image(img_pil: Image.Image, mask_arr: np.ndarray, color=(255
     overlay = Image.alpha_composite(img_pil, mask_img)
     return overlay
 
+
 def compute_stats_from_files(mask_path: Path, scores_path: Path):
+    """Reads saved mask and score GeoTIFFs and computes per-feature statistics.
+
+    Args:
+        mask_path: Path to the unique-ID mask GeoTIFF.
+        scores_path: Path to the confidence score GeoTIFF.
+
+    Returns:
+        dict: Keys are n_objects, mask_pixels, coverage_pct, mean_score,
+              coverage_area_m2. Any value may be None if the file is unreadable.
+    """
     n_objects = None
     mask_pixels = None
     coverage_pct = None
@@ -54,7 +94,6 @@ def compute_stats_from_files(mask_path: Path, scores_path: Path):
             coverage_pct = 100.0 * mask_pixels / total_pixels if total_pixels > 0 else 0.0
             unique_vals = np.unique(arr)
             n_objects = int(len([v for v in unique_vals if int(v) != 0]))
-            # compute area if transform available
             try:
                 tr = src.transform
                 pixel_area = abs(tr.a * tr.e - tr.b * tr.d)
@@ -62,7 +101,6 @@ def compute_stats_from_files(mask_path: Path, scores_path: Path):
             except Exception:
                 coverage_area_m2 = None
     except Exception as e:
-        # If mask file not found or unreadable, propagate None stats
         print("Warning: failed to read mask file:", mask_path, e)
 
     try:
@@ -85,7 +123,23 @@ def compute_stats_from_files(mask_path: Path, scores_path: Path):
 
 
 def save_masks_to_tif(masks, scores, source_path, mask_out, scores_out):
-    """Write unique-ID mask and per-pixel score GeoTIFFs using rasterio."""
+    """Writes unique-ID mask and per-pixel score GeoTIFFs using rasterio.
+
+    Each detected object receives a unique integer ID in the mask raster
+    (1, 2, 3, …); background pixels are 0. The scores raster stores the
+    confidence value of whichever mask covers each pixel.
+
+    Args:
+        masks: List of (H, W) boolean numpy arrays, one per detected object.
+        scores: List of float confidence scores, one per mask.
+        source_path: Source image path; used to inherit CRS and geotransform
+            when the source is a GeoTIFF.
+        mask_out: Output path for the mask GeoTIFF.
+        scores_out: Output path for the scores GeoTIFF.
+
+    Raises:
+        ValueError: If masks is empty.
+    """
     if len(masks) == 0:
         raise ValueError("No masks to save")
 
@@ -117,11 +171,32 @@ def save_masks_to_tif(masks, scores, source_path, mask_out, scores_out):
 
 
 def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True, overlay_alpha=0.45, hf_token=None):
+    """Runs SAM3 segmentation on all image–feature pairs in the mapping file.
+
+    For each image, loads it once into the model then iterates over its
+    assigned features, generating and saving a mask + score GeoTIFF per
+    feature. Optionally resumes from previously saved files.
+
+    Args:
+        mapping_path: Path to image_feature_map.json mapping image paths to
+            lists of feature strings.
+        out_dir: Output directory; masks/ and overlays/ subdirectories are
+            created automatically.
+        device: "gpu" to use CUDA or MPS if available, "cpu" to force CPU.
+        resume: If True, skip image–feature pairs whose output files already
+            exist.
+        overlay_alpha: Opacity for mask overlay PNGs in [0, 1].
+        hf_token: Optional HuggingFace access token for gated models.
+
+    Returns:
+        pd.DataFrame: One row per image–feature pair with columns image,
+            feature, mask_file, scores_file, overlay_file, n_objects,
+            mask_pixels, coverage_pct, coverage_area_m2, mean_score.
+    """
     mapping_path = Path(mapping_path)
     if not mapping_path.exists():
         raise FileNotFoundError(f"Mapping JSON not found: {mapping_path}")
 
-    # Set HF Token if provided
     if hf_token:
         os.environ["HF_TOKEN"] = hf_token
 
@@ -134,7 +209,6 @@ def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True,
     masks_dir.mkdir(parents=True, exist_ok=True)
     overlays_dir.mkdir(parents=True, exist_ok=True)
 
-    # Check for CUDA (NVIDIA) or MPS (Apple Silicon)
     if device == "gpu":
         if torch.cuda.is_available():
             device_idx = "cuda"
@@ -154,8 +228,6 @@ def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True,
     model.eval()
 
     stats_rows = []
-
-    # deterministic random palette per feature
     color_cache = {}
 
     for img_str, features in mapping.items():
@@ -172,7 +244,6 @@ def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True,
 
         fname_base = img_path.stem
 
-        # Image PIL for overlays
         try:
             img_pil = open_image_pil(img_path)
         except Exception:
@@ -184,7 +255,6 @@ def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True,
             scores_out = masks_dir / f"{fname_base}__{feat_safe}_scores.tif"
             overlay_out = overlays_dir / f"{fname_base}__{feat_safe}_overlay.png"
 
-            # If resume and both files exist, skip generation and just compute stats
             if resume and mask_out.exists() and scores_out.exists():
                 print("  Skipping", feat, "(already exists)")
                 stats = compute_stats_from_files(mask_out, scores_out)
@@ -267,14 +337,12 @@ def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True,
                 })
                 continue
 
-            # compute stats from saved files
             stats = compute_stats_from_files(mask_out, scores_out)
             palette_color = color_cache.get(feat)
             if palette_color is None:
                 palette_color = tuple([int(x) for x in np.random.RandomState(abs(hash(feat)) % (2**32)).randint(50, 255, size=3)])
                 color_cache[feat] = palette_color
 
-            # generate overlay if possible
             if img_pil is not None and mask_out.exists():
                 try:
                     with rasterio.open(str(mask_out)) as msrc:
@@ -305,6 +373,12 @@ def process(mapping_path: Path, out_dir: Path, device: str = "gpu", resume=True,
 
 
 def parse_args():
+    """Parses command-line arguments for the segmentation pipeline.
+
+    Returns:
+        argparse.Namespace: Parsed arguments with mapping, out, device,
+            and resume attributes.
+    """
     parser = argparse.ArgumentParser(description="Batch analyze SAM masks from mapping JSON")
     parser.add_argument("--mapping", "-m", default="image_feature_map.json", help="Path to mapping json")
     parser.add_argument("--out", "-o", default="mask", help="Output folder for masks, overlays and CSV")
@@ -314,9 +388,9 @@ def parse_args():
 
 
 def main():
+    """Entry point: resolves paths relative to the repo root and runs process()."""
     args = parse_args()
 
-    # Resolve paths relative to the repository root (script location)
     repo_root = Path(__file__).resolve().parent.parent
 
     mapping_arg = Path(args.mapping)

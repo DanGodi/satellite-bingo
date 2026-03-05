@@ -27,7 +27,6 @@ class GameState {
     this.cardMarkings = {};
     this.gameId = gameId || this.generateGameId();
 
-    // Initialize markings: each card gets an array of false (unmarked) for each event
     for (const card of cards) {
       this.cardMarkings[card.card_id] = new Array(card.events.length).fill(false);
     }
@@ -179,8 +178,6 @@ class GameState {
       const state = JSON.parse(stored);
       this.currentTurn = state.currentTurn;
       this.cardMarkings = state.cardMarkings;
-      // Note: we don't restore shuffled images - that would require re-shuffling the array
-      // Instead, we keep the current shuffle and just restore the turn and markings
       return true;
     } catch (e) {
       console.error('Failed to load game state from localStorage:', e);
@@ -202,15 +199,11 @@ class GameState {
  * @returns {Promise<object>} The parsed dataset
  */
 async function loadDataset() {
-  console.log('Loading dataset from: web/data/dataset.json');
   const response = await fetch('web/data/dataset.json');
-  console.log('Dataset fetch response:', response.status, response.statusText);
   if (!response.ok) {
     throw new Error(`Failed to load dataset.json: ${response.statusText}`);
   }
-  const data = await response.json();
-  console.log('Dataset loaded successfully:', data.images.length, 'images');
-  return data;
+  return await response.json();
 }
 
 /**
@@ -224,6 +217,57 @@ async function loadCards() {
     throw new Error(`Failed to load cards.json: ${response.statusText}`);
   }
   return await response.json();
+}
+
+/**
+ * Renders an end-game line chart showing all players' progress over the game.
+ *
+ * @param {string} canvasId - ID of the canvas element to render into.
+ * @param {Object.<string, number[]>} progressData - Map of peerId to per-turn square counts.
+ * @param {Object.<string, string>} playerNames - Map of peerId to display name.
+ */
+function renderEndGameChart(canvasId, progressData, playerNames) {
+  const ctx = document.getElementById(canvasId);
+  if (!ctx) return;
+
+  const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
+
+  let maxTurns = 0;
+  for (const progress of Object.values(progressData)) {
+    if (progress.length > maxTurns) maxTurns = progress.length;
+  }
+
+  const datasets = Object.entries(progressData).map(([peerId, progress], index) => {
+    const color = colors[index % colors.length];
+    return {
+      label: playerNames[peerId] || 'Player',
+      data: progress,
+      borderColor: color,
+      backgroundColor: color + '20',
+      tension: 0.3,
+      fill: false,
+      borderWidth: 2,
+      pointRadius: 3,
+      pointBackgroundColor: color
+    };
+  });
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: Array.from({ length: maxTurns }, (_, i) => (i + 1).toString()),
+      datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'top' }, title: { display: false } },
+      scales: {
+        y: { beginAtZero: true, max: 10, title: { display: true, text: 'Squares Completed' } },
+        x: { title: { display: true, text: 'Image Number' } }
+      }
+    }
+  });
 }
 
 /**

@@ -12,7 +12,7 @@
   <div class="container">
     <header>
       <h1>🛰️ Segmentation Bingo</h1>
-      <p>Host View - Control the Game</p>
+      <p>Host — share your game code, then reveal images to advance the game</p>
     </header>
 
     <div class="game-view">
@@ -27,7 +27,7 @@
             <button onclick="copyGameCode()" id="copyGameCodeBtn" style="padding: 12px 16px; font-size: 0.9em; white-space: nowrap; flex-shrink: 0;">📋 Copy</button>
           </div>
           <p style="margin: 0; color: #0c4a6e; font-size: 0.9em; text-align: center;">
-            👉 Players paste this on <strong>player.html</strong> to join.
+            👉 Players open <strong>player.html</strong>, paste this code, enter their name, and click <strong>Join &amp; Ready</strong>.
           </p>
         </div>
 
@@ -84,8 +84,8 @@
           <div id="imageContainer" style="position: relative;">
             <img id="gameImage" alt="Satellite image" style="display: none; width: 100%;">
             <div id="noImageState" class="empty-state">
-              <h3>Click "Next Image" to begin the game</h3>
-              <p>36 satellite images will be revealed one at a time.</p>
+              <h3>Click "Next Image" to reveal the first image</h3>
+              <p>36 satellite images will be shown one at a time. Player cards mark automatically as objects are detected.</p>
             </div>
           </div>
           <div class="image-id" id="imageIdDisplay" style="display: none;"></div>

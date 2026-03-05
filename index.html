@@ -19,7 +19,7 @@
       <h2>Welcome to the Game!</h2>
 
       <p style="margin-bottom: 30px; color: var(--text-secondary); line-height: 1.8;">
-        Play Bingo with satellite images! Watch as an AI detects objects like ships, cars, and pools. Mark your card as events appear, and be the first to complete your card to win. Play with friends across the network using simple 6-character game codes.
+        A multiplayer Bingo game played with satellite imagery. AI analysis (SAM 3) determines which objects appear in each image — ships, cars, buildings, pools — and your card marks automatically. Play with friends across any network using a 6-character game code. No installation required.
       </p>
 
       <button class="how-it-works-btn" onclick="openPanel('created')" style="margin-bottom: 20px;">
@@ -69,16 +69,16 @@
     <!-- Created Panel Content -->
     <div id="createdPanel">
       <div class="side-panel-section">
-        <h3>🤖 What is AI Segmentation?</h3>
+        <h3>🤖 The AI: SAM 3</h3>
         <p>
-          <strong>Segmentation</strong> is a computer vision technique where an AI model identifies and outlines every object in an image. Our game uses <strong>SAM 3 (Segment Anything Model 3)</strong>, a state-of-the-art model developed by Meta that can detect and label objects in any image.
+          <strong>Segmentation</strong> is a computer vision technique where an AI identifies and outlines every object in an image. This game uses <strong>SAM 3 (Segment Anything Model 3)</strong> by Meta, run offline against all 36 images before the game. The results — object counts per image — are stored in a JSON file that the web app reads. The model does not run live during gameplay.
         </p>
       </div>
 
       <div class="side-panel-section">
         <h3>🛰️ The Dataset</h3>
         <p>
-          This game uses <strong>36 satellite images</strong> from the USGS showing different locations on Earth captured from space. The AI detects what objects appear in each image:
+          The game uses <strong>36 satellite images</strong> from the USGS. SAM 3 was used to detect which objects appear in each image and how many:
         </p>
         <ul style="margin-left: 20px; color: var(--text-secondary); font-size: 0.95em; line-height: 1.8;">
           <li>Ships and maritime vessels</li>
@@ -89,20 +89,20 @@
           <li>Roads and parking lots</li>
         </ul>
         <img src="web/images/image_1.jpg" alt="Example satellite image" class="side-panel-image">
-        <p style="font-size: 0.85em; color: var(--text-muted); margin-top: 8px;">Example: A satellite image analyzed by AI</p>
+        <p style="font-size: 0.85em; color: var(--text-muted); margin-top: 8px;">Example: one of the 36 satellite images used in the game</p>
       </div>
 
       <div class="side-panel-section">
         <h3>🎲 Fair Card Generation</h3>
         <p>
-          Bingo cards are generated using a <strong>Monte Carlo algorithm</strong> to ensure all cards are statistically balanced. This means each player has roughly the same chance of winning, regardless of which card they get.
+          When the host starts the game, bingo cards are generated using a <strong>Monte Carlo algorithm</strong> that ensures all cards are statistically balanced. Each player has roughly the same expected number of turns to win, regardless of which card they get.
         </p>
       </div>
 
       <div class="side-panel-section">
         <h3>💻 Open Source</h3>
         <p>
-          This game is built with vanilla HTML, CSS, and JavaScript. No servers needed — everything runs in your browser using WebRTC for peer-to-peer connections. View the code on <a href="https://github.com/DanGodi/segmentation-bingo">GitHub</a>.
+          Built with vanilla HTML, CSS, and JavaScript — no framework, no server. Multiplayer sync uses WebRTC via PeerJS for direct peer-to-peer connections. View the source on <a href="https://github.com/DanGodi/segmentation-bingo">GitHub</a>.
         </p>
       </div>
     </div>
@@ -110,56 +110,51 @@
     <!-- Play Panel Content -->
     <div id="playPanel" style="display: none;">
       <div class="side-panel-section">
-        <h3>📋 Game Rules</h3>
+        <h3>📋 How a Round Works</h3>
         <ol>
-          <li><strong>Host</strong> generates balanced bingo cards using a Monte Carlo algorithm</li>
-          <li><strong>Players</strong> join with a 6-character game code and enter their name</li>
-          <li>Host reveals satellite images one at a time</li>
-          <li>An <strong>AI model (SAM 3)</strong> detects objects in each image</li>
-          <li>When detected objects match your bingo card events, your squares auto-mark</li>
-          <li>You can also <strong>manually mark squares</strong> if you spot objects the AI missed</li>
-          <li><strong>First player to complete their card</strong> claims BINGO and wins!</li>
+          <li><strong>Host</strong> opens <code>host.html</code> and shares the 6-character game code</li>
+          <li><strong>Players</strong> open <code>player.html</code>, enter the code and their name, and click <strong>Join & Ready</strong></li>
+          <li>Host clicks <strong>Start Game</strong> — each player receives a unique, balanced bingo card</li>
+          <li>Host reveals satellite images one at a time with <strong>Next Image</strong></li>
+          <li>Pre-computed AI analysis determines which objects appear in each image — matching squares mark automatically</li>
+          <li>Players can also <strong>click squares manually</strong> if the AI missed something</li>
+          <li>When all 10 squares are marked, click <strong>CLAIM BINGO!</strong> — the host verifies the win</li>
+          <li>After 3 verified winners, the game ends and shows a progress chart for all players</li>
         </ol>
       </div>
 
       <div class="side-panel-section">
         <h3>🎮 For the Host</h3>
         <ul style="margin-left: 20px; color: var(--text-secondary); font-size: 0.95em; line-height: 1.8;">
-          <li>Go to <strong>Host Game</strong> on the home page</li>
-          <li>Share the 6-character <strong>game code</strong> with players</li>
-          <li>Wait for players to join and mark themselves as ready</li>
-          <li>Click <strong>Start Game</strong> to begin</li>
-          <li>Click <strong>Next Image</strong> to reveal satellite images one by one</li>
-          <li>Watch the player progress bars as they mark squares</li>
-          <li>When a player claims BINGO, the system verifies their win</li>
-          <li>Game ends when 3+ players win — see the final progress chart!</li>
+          <li>Open <strong>Host Game</strong> — a 6-character game code appears automatically</li>
+          <li>Copy and share the code with players (use the 📋 Copy button)</li>
+          <li>Wait for players to join; once 2 or more are ready, click <strong>Start Game</strong></li>
+          <li>Click <strong>Next Image</strong> to reveal each satellite image</li>
+          <li>Watch per-player progress bars update in real time</li>
+          <li>The game ends automatically after 3 players have their BINGO verified</li>
         </ul>
       </div>
 
       <div class="side-panel-section">
         <h3>👤 For Players</h3>
         <ul style="margin-left: 20px; color: var(--text-secondary); font-size: 0.95em; line-height: 1.8;">
-          <li>Go to <strong>I'm a Player</strong> on the home page</li>
-          <li>Enter the 6-character <strong>game code</strong> from the host</li>
-          <li>Enter your name (max 20 characters) and click <strong>Join & Ready</strong></li>
-          <li>Wait for the host to start the game</li>
-          <li>Receive your unique bingo card</li>
-          <li>Watch as squares auto-mark when AI detects matching objects</li>
-          <li>Manually click squares if you spot objects the AI missed</li>
+          <li>Open <strong>I'm a Player</strong> from the home page</li>
+          <li>Enter the 6-character game code from the host, then your name</li>
+          <li>Click <strong>Join & Ready</strong> and wait for the host to start</li>
+          <li>Your unique bingo card appears automatically when the game begins</li>
+          <li>Squares mark themselves as each image is revealed</li>
+          <li>Click any square manually if you think the AI missed an object</li>
           <li>When all 10 squares are marked, click <strong>CLAIM BINGO!</strong></li>
-          <li>The host will verify your win</li>
         </ul>
       </div>
 
       <div class="side-panel-section">
-        <h3>💡 Tips for Success</h3>
+        <h3>💡 Good to Know</h3>
         <ul style="margin-left: 20px; color: var(--text-secondary); font-size: 0.95em; line-height: 1.8;">
-          <li>Each game generates a unique, balanced set of bingo cards</li>
-          <li>You can play with 2+ players on different networks</li>
-          <li>Watch the host's screen to see which objects are detected each turn</li>
-          <li>The AI might miss some objects — use manual marking to help!</li>
-          <li>The first verified winner completes their card and claims BINGO</li>
-          <li>After 3+ players win, the game ends and shows everyone's progress chart</li>
+          <li>Works across different networks — no LAN required</li>
+          <li>Cards are balanced so every player has a similar expected win time</li>
+          <li>The AI ran offline before the game — it does not process images live</li>
+          <li>After 3 winners are verified, everyone sees a progress chart</li>
         </ul>
       </div>
     </div>

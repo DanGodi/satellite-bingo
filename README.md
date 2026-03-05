@@ -1,91 +1,90 @@
-# Segmentation Bingo 🎟️
+# Segmentation Bingo 🛰️
 
-Generate and play a custom Bingo game using custom imagery and AI-powered segmentation.
-
-This project allows you to turn a collection of images into a fully playable Bingo game. It uses the **Segment Anything Model (SAM)** to detect features (like pools, cars, boats) and generates statistically "fair" Bingo cards based on the frequency of these features.
+A multiplayer Bingo game played with satellite imagery. An AI model detects objects in each image — ships, cars, buildings, pools — and fires events on your card automatically.
 
 ## 🚀 Play Online
 
-**Live Game:** https://DanGodi.github.io/segmentation-bingo/
+**Live game:** https://DanGodi.github.io/segmentation-bingo/
 
-No installation needed! Open the link, host a game, and share the 6-character code with up to 4 players. Works on desktop, tablet, and mobile — plays seamlessly across different networks using WebRTC P2P.
+No installation required. One player hosts, shares a game code, and everyone joins from their own device. Works across different networks on desktop, tablet, and mobile.
 
-## 🌟 Features
+## 🎮 How to Play
 
-*   **Interactive Labeling**: Easy-to-use widget to tag features in your images.
-*   **AI Segmentation**: Uses Meta's SAM3 to detect objects and calculate coverage/counts.
-*   **Fair Card Generation**: Uses Monte Carlo simulations to ensure all Bingo cards have similar difficulty (expected turns to win).
-*   **Printable Assets**: Generates PDF/Image files for the Bingo cards.
-*   **Game Presentation**: Creates a slide deck (PDF) to "call" the game by revealing images one by one.
-*   **Live Web App**: Play instantly in the browser with real-time P2P multiplayer across networks.
+1. **Host** opens `host.html`, gets a game code, and shares it with players.
+2. **Players** open `player.html`, enter the game code and their name, and click **Join & Ready**.
+3. Once at least two players are ready, the host clicks **Start Game** — each player receives a unique bingo card.
+4. The host reveals satellite images one at a time with **Next Image**.
+5. When the AI detects objects matching a card event, that square marks automatically. Players can also click squares manually.
+6. The first player with all 10 squares marked clicks **CLAIM BINGO!** — the host verifies the win.
+7. After 3 verified winners, the game ends and shows a progress chart for all players.
 
-## 🌐 Web App
+## ⚙️ How It Works
 
-The project includes a fully functional web app (no server required — hosted on GitHub Pages):
+- **No server.** Everything runs in the browser. Multiplayer sync uses [PeerJS](https://peerjs.com/) (WebRTC) for direct peer-to-peer connections.
+- **Pre-computed data.** The AI segmentation was run offline and the results are stored in `web/data/dataset.json`. The web app reads that file — it does not run the model live.
+- **Fair cards.** Cards are generated at game start using a Monte Carlo algorithm to ensure similar expected win times across all players.
+- **Hosted on GitHub Pages.** Push to `main` and the live site updates automatically.
 
-- **Host View**: Display satellite images one by one, see live card progress for all players
-- **Player View**: Join with a 6-character code, mark your card as events fire, claim BINGO
-- **Real-time Sync**: WebRTC P2P connection streams game updates and card markings live
-- **End-Game Charts**: Line charts showing how quickly each player completed their cards
-- **Responsive Design**: Works on phones, tablets, and desktops with an intuitive UI
+## 🧪 Developer: Build a Custom Dataset
 
-All without needing to run any code locally — just open the live URL!
+To use your own images, you need to run the Python pipeline offline.
 
-## 🛠️ Installation
+### Requirements
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/DanGodi/segmentation-bingo.git
-    cd segmentation-bingo
-    ```
+- Python 3.10+, GPU recommended (CUDA or Apple Silicon MPS)
+- A [HuggingFace access token](https://huggingface.co/settings/tokens) with access to [facebook/sam3](https://huggingface.co/facebook/sam3)
 
-2.  **Create a virtual environment (recommended):**
-    ```bash
-    python -m venv .venv
-    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-    ```
+### Setup
 
-3.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-    *Note: You will need a GPU-enabled environment for reasonable performance with the Segment Anything Model.*
+```bash
+git clone https://github.com/DanGodi/segmentation-bingo.git
+cd segmentation-bingo
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
 
-## 🔑 Model Access (Important!)
+### Pipeline
 
-This project uses **SAM 3 (Segment Anything Model 3)** directly via HuggingFace `transformers`. To use it, you must:
+The full pipeline is orchestrated from `run_full_game.ipynb`:
 
-1.  **Request Access**: Go to the [SAM 3 Hugging Face page](https://huggingface.co/facebook/sam3) and accept the license terms.
-2.  **Get a Token**: Create a [Hugging Face Access Token](https://huggingface.co/settings/tokens) (Read permissions are sufficient).
-3.  **Configure Notebook**: In `run_full_game.ipynb`, look for **Step 3**, uncomment the login cell, run it and insert you HF token in the required field.
+| Step | Script | What it does |
+|------|--------|-------------|
+| 1 | `utils/process_images.py` | Resize raw images to standard format |
+| 2 | `utils/label_images.py` | Interactive widget to tag which features appear in each image |
+| 3 | `utils/analyze_segment.py` | Run SAM3 via HuggingFace `transformers`; generate mask GeoTIFFs and `segmentation_stats.csv` |
+| 4 | `utils/create_cards.py` | Generate balanced bingo cards from stats |
+| 5 | `utils/prepare_web_assets.py` | Package outputs into `web/data/` and `web/images/` |
 
-## 🎮 How to Create Your Game
+After step 5, commit the updated `web/data/` and `web/images/` directories and the live site will use your new dataset.
 
-The entire pipeline is orchestrated from a single Jupyter Notebook.
+### Model access
 
-1.  **Prepare Images**: Place your raw images (JPG, PNG, TIF) in a directory of your choice in the main directory and input folder path into the master notebook when prompted.
-2.  **Open the Master Notebook**:
-    Open `run_full_game.ipynb`.
-3.  **Run the Steps**:
-    *   **Step 1**: Process images (resizes them to `converted_images/`).
-    *   **Step 2**: Run the interactive labeler to select which features (e.g., "Pool", "Ship") are in which image.
-    *   **Step 3**: Run the AI analysis. This will generate masks and stats in `mask/`.
-    *   **Step 4**: Generate Bingo Cards. You can configure the difficulty and number of cards.
-    *   **Step 5**: Generate printable cards in `printable_cards/`.
-    *   **Step 6**: Generate the game presentation PDF (`bingo_game_presentation.pdf`).
+SAM3 is a gated model. Before running step 3:
+
+1. Accept the license at [huggingface.co/facebook/sam3](https://huggingface.co/facebook/sam3).
+2. Create a read-only access token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens).
+3. In `run_full_game.ipynb`, find **Step 3** and set your token in the login cell.
 
 ## 📂 Project Structure
 
-*   `run_full_game.ipynb`: The main entry point for the project.
-*   `utils/`: Python modules for each step of the pipeline.
-    *   `process_images.py`: Image preprocessing.
-    *   `label_images.py`: Interactive labeling widget.
-    *   `analyze_segment.py`: SAM inference and stats calculation.
-    *   `create_cards.py`: Statistical card generation.
-    *   `generate_printable_cards.py`: Card rendering.
-    *   `generate_game_pdf.py`: Game presentation generation.
-*   `your_path/`: Input folder for your raw images.
-*   `converted_sat_images/`: Processed images used for the game.
-*   `mask/`: Output folder for segmentation masks and statistics.
-*   `printable_cards/`: Generated Bingo cards ready for printing.
-
+```
+segmentation-bingo/
+  index.html, host.html, player.html   ← Web app entry points
+  web/
+    css/style.css                       ← Responsive UI
+    js/
+      events.js                         ← Event string evaluation
+      game.js                           ← GameState class, shared utilities
+      host.js, player.js                ← View controllers
+      peer-connection.js                ← PeerJS wrapper
+      card-generator.js                 ← Monte Carlo card generation
+    data/
+      dataset.json                      ← Pre-computed image metadata
+      cards.json                        ← Default bingo cards
+    images/
+      image_1.jpg … image_36.jpg        ← Resized satellite images
+  utils/                                ← Python pipeline scripts
+  notebooks/                            ← Jupyter notebooks
+  run_full_game.ipynb                   ← Master pipeline notebook
+```
